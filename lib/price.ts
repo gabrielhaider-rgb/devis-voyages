@@ -10,8 +10,12 @@ const eurosAndCents = new Intl.NumberFormat("fr-FR", {
 
 // Les prix sont stockés en centimes : formatPrice(65000) → "650 €",
 // formatPrice(1250) → "12,50 €".
+// L'espace fine insécable (U+202F) d'Intl n'existe pas dans la police Geist
+// et disparaît à l'impression : on la remplace par une espace insécable.
 export function formatPrice(cents: number) {
-  return (cents % 100 === 0 ? wholeEuros : eurosAndCents).format(cents / 100);
+  return (cents % 100 === 0 ? wholeEuros : eurosAndCents)
+    .format(cents / 100)
+    .replaceAll("\u202f", "\u00a0");
 }
 
 export type PricingType = "fixed" | "per_person";

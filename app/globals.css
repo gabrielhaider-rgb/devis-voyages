@@ -24,3 +24,20 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Impression du devis (« Enregistrer en PDF ») : A4, toujours en clair. */
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+@media print {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+
+  body {
+    print-color-adjust: exact;
+  }
+}

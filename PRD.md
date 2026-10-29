@@ -50,11 +50,11 @@ Parcours **sans compte** :
 - assistance à l'aéroport ;
 - accompagnement par un guide formé.
 
-Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **incluse dans le voyage**. Elle s'affiche dans une liste « Inclus dans le voyage, sans supplément », sans case à cocher, et n'entre pas dans le calcul du devis.
+Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **incluse dans le voyage**. Elle s'affiche dans une liste « Inclus dans le voyage, sans supplément », sans case à cocher, n'entre pas dans le calcul du devis, et elle est rappelée sur le devis (« Accessibilité incluse, sans supplément »).
 
 **Options non cumulables** : certaines options s'excluent (ex. « Transfert aéroport » et « Transfert en véhicule adapté » : c'est l'un ou l'autre ; en Islande, « Location d'un 4x4 » et « Véhicule adapté avec chauffeur »). Elles partagent un même groupe (`exclusive_group`) ; tant que l'une est cochée, les autres **disparaissent de l'affichage** (pour qu'un client ne croie pas devoir prendre les deux), et elles réapparaissent quand on la décoche. Chaque option du groupe affiche « Non cumulable avec : … ».
 
-> Pour la démo, la configuration passe de la page voyage à la page devis par l'URL (paramètres de requête). Rien n'est enregistré en base.
+> Pour la démo, la configuration passe de la page voyage à la page devis par l'URL (paramètres de requête). Rien n'est enregistré en base. La page devis revérifie cette configuration (départ, nombre de voyageurs, options du voyage, options non cumulables) et affiche un message clair si elle n'est pas valide. Le numéro du devis est calculé à partir de la date et de la configuration.
 
 ### V1.1 — après la démo
 

@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import type { Trip, TripOption } from "@/lib/catalogue";
 import { computeQuote, formatDate, formatPrice } from "@/lib/price";
-
-const MAX_TRAVELERS = 9;
+import { MAX_TRAVELERS } from "@/lib/quote-request";
 
 export function TripConfigurator({ trip }: { trip: Trip }) {
   const [departureId, setDepartureId] = useState(trip.departures[0]?.id);
