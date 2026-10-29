@@ -81,20 +81,25 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 - À la connexion, un admin arrive sur `/admin` (un client sur « Mes devis »), sauf s'il venait d'une page précise, comme un devis à enregistrer. Un badge « Administrateur » s'affiche dans le bandeau, et la page d'administration rappelle que les modifications s'appliquent immédiatement au site public.
 - Hors périmètre de la V2 : voir les devis des clients, supprimer définitivement un voyage, photos, ordre d'affichage.
 
-### V3
+### V3 — Assistant conversationnel (texte)
 
-- **Agent conversationnel d'aide au devis**, à l'écrit (chat) ou à la voix. Le client décrit son projet (« 2 adultes, Lisbonne en mai, avec un transfert adapté ») et l'agent :
-  - propose les voyages et départs du catalogue qui correspondent ;
+- **Une bulle « Besoin d'aide ? »** en bas à droite de toutes les pages (sauf l'administration et l'impression), ouverte à tous, sans compte.
+- Le visiteur décrit son projet (« 2 adultes, Lisbonne en mai, avec un transfert adapté ») et l'assistant :
+  - cherche dans le catalogue les voyages et départs qui correspondent ;
   - pose les questions manquantes (date, nombre de voyageurs, options, besoins d'accessibilité) ;
-  - remplit la configuration du voyage, que le client vérifie avant d'ouvrir le devis.
+  - chiffre une configuration et affiche une carte avec le prix et un bouton **« Voir et ajuster »**, qui ouvre la page du voyage **pré-remplie** (`/voyages/<voyage>?depart=…&voyageurs=…&options=…`). Le visiteur vérifie, ajuste, puis ouvre son devis comme d'habitude.
 - **Garde-fous** :
-  - l'agent ne lit que le catalogue en base et ne peut rien inventer : voyages, options et prix viennent de Supabase ;
-  - le prix est toujours calculé par la fonction de calcul unique (section 4), jamais par l'agent ;
-  - le client valide toujours lui-même la configuration avant le devis.
-- **Pistes techniques** (à confirmer au moment de la V3) :
-  - un modèle de langage appelé côté serveur (route Next.js), la clé d'API restant dans les variables d'environnement ;
-  - la lecture du catalogue et le remplissage de la configuration sont exposés à l'agent sous forme d'outils ;
-  - pour la voix : reconnaissance et synthèse vocales du navigateur (Web Speech API) en première approche, le texte restant le mode principal.
+  - l'assistant ne lit que le catalogue en ligne, par trois outils (lister les voyages, détailler un voyage, chiffrer une configuration) : il ne peut inventer ni voyage ni prix ;
+  - le prix est toujours calculé par la fonction de calcul unique (section 4), avec les mêmes vérifications que la page devis (départ existant, 1 à 9 voyageurs, options du voyage, options non cumulables) ;
+  - le visiteur valide toujours lui-même avant le devis ; une mention rappelle que les réponses sont générées par une IA.
+- **Modèle** : Claude Haiku 5.5 (API Anthropic), appelé uniquement côté serveur (`/api/assistant`) ; la clé d'API (`ANTHROPIC_API_KEY`) est un secret, jamais exposée au navigateur.
+- **Protection contre les abus et les attaques (DDoS)**, en quatre couches :
+  1. protection anti-DDoS automatique de Vercel (et « Attack Mode » en cas d'attaque) ;
+  2. règle de limitation de débit Vercel sur `/api/assistant` : 10 requêtes par minute et par adresse IP, bloquées avant d'atteindre le code ;
+  3. plafonds enregistrés dans Supabase (migration 006) : 20 messages par heure et 50 par jour par adresse IP (stockée sous forme d'empreinte, jamais en clair) ; 300 par heure et 1 000 par jour pour tout le site ; au-delà, l'assistant répond qu'il est indisponible sans appeler Claude. S'y ajoutent 20 messages par conversation et 1 000 caractères par message ;
+  4. limite de dépense mensuelle dans la console Anthropic, dernier filet.
+- Hors périmètre de cette étape : la voix (étape suivante), l'historique des conversations, l'enregistrement du devis par l'assistant.
+- **Étape suivante (voix)** : reconnaissance et synthèse vocales du navigateur (Web Speech API), le texte restant le mode principal.
 
 ### V4 — Suivi des devis et des clients (administration)
 
@@ -150,6 +155,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | `quotes` | `id`, `user_id`, `trip_slug`, `trip_title`, `destination`, `duration_days`, `departure_date`, `travelers`, `lines` (JSON), `included_accessibility` (JSON), `total_cents`, `created_at` — copie figée du devis | V1.1 |
 | `profiles` | `id` (= `auth.users.id`), `email`, `role` (`client` ou `admin`), `created_at` | V2 |
 | `trips.archived_at` | date d'archivage (`null` = en ligne) | V2 |
+| `assistant_usage` | compteurs de messages de l'assistant par empreinte d'IP et pour tout le site, par heure et par jour | V3 |
 | `profiles` (ajouts) | `first_name`, `last_name`, `phone` (facultatif) | V4 |
 | `quotes` (ajout) | `has_accessibility` : au moins une option d'accessibilité payante (calculé à l'enregistrement) | V4 |
 
@@ -208,7 +214,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 
 - **V1.1** : compte client et historique des devis.
 - **V2** : rôles, interface admin du catalogue, archivage des voyages, gestion des admins.
-- **V3** : agent conversationnel (texte, puis voix) d'aide à la création des devis.
+- **V3** : assistant conversationnel en texte (bulle sur toutes les pages, Claude Haiku 5.5, protections anti-abus), puis la voix.
 - **V4** : profil enrichi (nom, prénom, téléphone), dashboard et liste des devis, liste des clients et des admins. Elle ne dépend pas de la V3 et peut être construite avant.
 
 ## 10. Risques et décisions
@@ -245,3 +251,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | Accueil : prix du prochain départ au lieu du prix « à partir de » | Une hausse de prix sur le prochain départ restait invisible (ex. Islande à 2 000 € affichée 1 890 €) | La carte montre la date et le prix du départ le plus proche |
 | 29/10/2026 | V4 : suivi des devis et des clients dans l'administration | Permettre à l'agence de recontacter les clients et de voir quels voyages intéressent | Profil enrichi, lecture de tous les devis par les admins (RLS) |
 | 29/10/2026 | V4 : prénom et nom obligatoires, téléphone facultatif | Identifier le client sans imposer un numéro | Inscription modifiée ; page « Mon profil » pour les comptes existants |
+| 29/10/2026 | V3 : assistant ouvert à tous, sans compte | Aucune friction pour le visiteur | Protections anti-abus en quatre couches, dont un plafond quotidien pour tout le site |
+| 29/10/2026 | V3 : Claude Haiku 5.5 plutôt qu'un modèle plus grand ou un modèle ouvert | Coût très bas (environ un centime par conversation), fiable avec les outils, même architecture que le site | Réponses moins fines sur les demandes complexes ; modèle ouvert écarté (hébergement trop lourd) |
+| 29/10/2026 | V3 : texte d'abord, la voix ensuite | Livrer un assistant fiable avant d'ajouter la voix | La voix fera l'objet d'une étape suivante |
+| 29/10/2026 | V3 : bulle de discussion sur toutes les pages | Aide visible partout dans le parcours | Masquée dans l'administration et à l'impression |

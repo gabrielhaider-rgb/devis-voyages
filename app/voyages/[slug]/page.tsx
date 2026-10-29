@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { TripConfigurator } from "@/components/trip-configurator";
+import { Suspense } from "react";
+import { TripConfigurator, TripConfiguratorFromUrl } from "@/components/trip-configurator";
 import { getTrip, getTrips } from "@/lib/catalogue";
 
 export async function generateStaticParams() {
@@ -38,7 +39,10 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
         <p className="mt-3 max-w-2xl text-foreground/80">{trip.description}</p>
       </header>
 
-      <TripConfigurator trip={trip} />
+      {/* La version sans paramètres sert de page statique ; l'adresse la pré-remplit ensuite. */}
+      <Suspense fallback={<TripConfigurator trip={trip} />}>
+        <TripConfiguratorFromUrl trip={trip} />
+      </Suspense>
     </main>
   );
 }

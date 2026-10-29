@@ -1,15 +1,36 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { Trip, TripOption } from "@/lib/catalogue";
 import { computeQuote, formatDate, formatPrice } from "@/lib/price";
-import { MAX_TRAVELERS } from "@/lib/quote-request";
+import { MAX_TRAVELERS, resolveQuoteRequest } from "@/lib/quote-request";
 
-export function TripConfigurator({ trip }: { trip: Trip }) {
-  const [departureId, setDepartureId] = useState(trip.departures[0]?.id);
-  const [travelers, setTravelers] = useState(2);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+type InitialConfiguration = { departureId?: string; travelers: number; optionIds: string[] };
+
+// Configuration pré-remplie par l'adresse (lien « Voir et ajuster » de l'assistant) :
+// ?depart=…&voyageurs=…&options=a,b. Une adresse invalide est ignorée.
+export function TripConfiguratorFromUrl({ trip }: { trip: Trip }) {
+  const searchParams = useSearchParams();
+  const resolved = searchParams.has("depart")
+    ? resolveQuoteRequest(trip, Object.fromEntries(searchParams))
+    : null;
+  const initial = resolved?.ok
+    ? {
+        departureId: resolved.request.departure.id,
+        travelers: resolved.request.travelers,
+        optionIds: resolved.request.options.map((o) => o.id),
+      }
+    : undefined;
+
+  return <TripConfigurator key={searchParams.toString()} trip={trip} initial={initial} />;
+}
+
+export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: InitialConfiguration }) {
+  const [departureId, setDepartureId] = useState(initial?.departureId ?? trip.departures[0]?.id);
+  const [travelers, setTravelers] = useState(initial?.travelers ?? 2);
+  const [selectedIds, setSelectedIds] = useState<string[]>(initial?.optionIds ?? []);
 
   const departure = trip.departures.find((d) => d.id === departureId);
   if (!departure) {

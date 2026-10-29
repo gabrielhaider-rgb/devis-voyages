@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
+import { AssistantBubble } from "@/components/assistant-bubble";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
@@ -27,6 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <SiteHeader />
         {children}
+        {/* La bulle lit l'adresse de la page (masquée dans l'administration). */}
+        <Suspense>
+          <AssistantBubble />
+        </Suspense>
       </body>
     </html>
   );
