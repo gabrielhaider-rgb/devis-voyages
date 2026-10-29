@@ -84,7 +84,7 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 ### V3 — Assistant conversationnel (texte)
 
 - **Une bulle « Besoin d'aide ? »** en bas à droite des pages du parcours (accueil, voyages, devis, Mes devis), ouverte à tous, sans compte. Elle est masquée dans l'administration, sur les pages de compte (connexion, inscription, mot de passe, profil) et à l'impression.
-- Le visiteur décrit son projet (« 2 adultes, Lisbonne en mai, avec un transfert adapté ») et l'assistant :
+- Le visiteur l'ouvre aussi par le bouton « Me faire conseiller » de l'accueil. Il décrit son projet (« 2 adultes, Lisbonne en mai, avec un transfert adapté ») et l'assistant :
   - cherche dans le catalogue les voyages et départs qui correspondent ;
   - pose les questions manquantes (date, nombre de voyageurs, options, besoins d'accessibilité) ;
   - chiffre une configuration et affiche une carte avec le prix et un bouton **« Voir et ajuster »**, qui ouvre la page du voyage **pré-remplie** (`/voyages/<voyage>?depart=…&voyageurs=…&options=…`). Le visiteur vérifie, ajuste, puis ouvre son devis comme d'habitude.
@@ -257,3 +257,5 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V3 : Claude Haiku 5.5 plutôt qu'un modèle plus grand ou un modèle ouvert | Coût très bas (environ un centime par conversation), fiable avec les outils, même architecture que le site | Réponses moins fines sur les demandes complexes ; modèle ouvert écarté (hébergement trop lourd) |
 | 29/10/2026 | V3 : texte d'abord, la voix ensuite | Livrer un assistant fiable avant d'ajouter la voix | La voix fera l'objet d'une étape suivante |
 | 29/10/2026 | V3 : bulle de discussion sur toutes les pages | Aide visible partout dans le parcours | Masquée dans l'administration et à l'impression |
+| 29/10/2026 | Design « Carnet de voyage » (piste A) sur tout le site | Donner envie de voyager : tons sable et terre cuite, titres Fraunces, photos | Site toujours clair (pas de mode sombre) ; contrastes vérifiés (texte ≥ 4,5:1) ; PDF sur fond blanc |
+| 29/10/2026 | Photos des voyages par adresse d'image saisie dans l'admin | Simple, sans stockage de fichiers | Un aplat de couleur avec la destination s'affiche tant qu'aucune photo n'est renseignée |

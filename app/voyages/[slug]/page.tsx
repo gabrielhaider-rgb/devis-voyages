@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { TripConfigurator, TripConfiguratorFromUrl } from "@/components/trip-configurator";
+import { TripPhoto } from "@/components/trip-photo";
 import { getTrip, getTrips } from "@/lib/catalogue";
 
 export async function generateStaticParams() {
@@ -24,19 +25,20 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
   if (!trip) notFound();
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
-      <Link href="/" className="text-sm text-foreground/70 hover:underline">
+    <main className="mx-auto w-full max-w-6xl px-4 pt-4 pb-16 sm:px-8">
+      <Link href="/#voyages" className="text-sm text-foreground/75 hover:text-clay">
         ← Tous les voyages
       </Link>
 
-      <header className="mt-4 mb-8">
-        <p className="text-sm font-medium uppercase tracking-wide text-sky-600">
-          {trip.destination} · {trip.durationDays} jours
-        </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
-          {trip.title}
-        </h1>
-        <p className="mt-3 max-w-2xl text-foreground/80">{trip.description}</p>
+      <header className="mt-6 mb-12 grid items-center gap-8 md:grid-cols-2">
+        <div>
+          <p className="text-sm font-semibold tracking-[0.14em] text-clay uppercase">
+            {trip.destination} · {trip.durationDays} jours
+          </p>
+          <h1 className="mt-3 text-5xl leading-[1.05] tracking-tight sm:text-6xl">{trip.title}</h1>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-foreground/75">{trip.description}</p>
+        </div>
+        <TripPhoto src={trip.imageUrl} destination={trip.destination} className="h-72 w-full rounded-t-[160px] rounded-b-3xl sm:h-96" />
       </header>
 
       {/* La version sans paramètres sert de page statique ; l'adresse la pré-remplit ensuite. */}

@@ -38,7 +38,14 @@ describe("parseTripForm", () => {
     const result = parseTripForm(base);
     expect(result).toEqual({
       ok: true,
-      value: { slug: "porto-3-jours", title: "Porto, 3 jours", destination: "Portugal", duration_days: 3, description: "" },
+      value: {
+        slug: "porto-3-jours",
+        title: "Porto, 3 jours",
+        destination: "Portugal",
+        duration_days: 3,
+        description: "",
+        image_url: null,
+      },
     });
   });
 
@@ -47,6 +54,13 @@ describe("parseTripForm", () => {
     expect(parseTripForm({ ...base, duration_days: "2.5" }).ok).toBe(false);
     expect(parseTripForm({ ...base, slug: "Porto 3 jours" }).ok).toBe(false);
     expect(parseTripForm({ ...base, title: "" }).ok).toBe(false);
+  });
+
+  it("accepte une photo en https et refuse les autres adresses", () => {
+    const withPhoto = parseTripForm({ ...base, image_url: "https://images.unsplash.com/photo-123?w=1200" });
+    expect(withPhoto.ok && withPhoto.value.image_url).toBe("https://images.unsplash.com/photo-123?w=1200");
+    expect(parseTripForm({ ...base, image_url: "http://exemple.fr/a.jpg" }).ok).toBe(false);
+    expect(parseTripForm({ ...base, image_url: "javascript:alert(1)" }).ok).toBe(false);
   });
 });
 

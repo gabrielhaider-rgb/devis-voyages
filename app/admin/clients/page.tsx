@@ -37,14 +37,14 @@ async function ClientList({ searchParams }: { searchParams: PageProps<"/admin/cl
           Rechercher un client
         </label>
         <input id="q" name="q" type="search" defaultValue={search} placeholder="Nom ou email" className={inputClass} />
-        <button type="submit" className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700">
+        <button type="submit" className="rounded-full bg-clay px-4 py-2 text-sm font-medium text-cream hover:bg-clay-dark">
           Rechercher
         </button>
       </form>
       {search && (
         <p className="mt-2 text-sm text-foreground/70">
           {clients.length} résultat{clients.length > 1 ? "s" : ""} pour « {search} » ·{" "}
-          <Link href="/admin/clients" className="text-sky-600 hover:underline">
+          <Link href="/admin/clients" className="text-clay hover:underline">
             Tout afficher
           </Link>
         </p>
@@ -56,7 +56,7 @@ async function ClientList({ searchParams }: { searchParams: PageProps<"/admin/cl
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[40rem] text-sm">
             <thead>
-              <tr className="border-b border-foreground/15 text-left text-foreground/70">
+              <tr className="border-b border-sand-deep text-left text-foreground/70">
                 <th className="pb-2 font-medium">Client</th>
                 <th className="pb-2 font-medium">Email</th>
                 <th className="pb-2 font-medium">Téléphone</th>
@@ -69,7 +69,7 @@ async function ClientList({ searchParams }: { searchParams: PageProps<"/admin/cl
               {clients.map((client) => (
                 <tr key={client.id} className="border-b border-foreground/10 hover:bg-foreground/5">
                   <td className="py-2 pr-3">
-                    <Link href={`/admin/clients/${client.id}`} className="text-sky-600 hover:underline">
+                    <Link href={`/admin/clients/${client.id}`} className="text-clay hover:underline">
                       {client.name}
                     </Link>
                   </td>

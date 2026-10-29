@@ -50,7 +50,7 @@ async function EditTrip({ id }: { id: string }) {
         <ArchiveButton trip={trip} />
       </div>
       {!trip.archived && (
-        <Link href={`/voyages/${trip.slug}`} className="mt-1 inline-block text-sm text-sky-600 hover:underline">
+        <Link href={`/voyages/${trip.slug}`} className="mt-1 inline-block text-sm text-clay hover:underline">
           Voir la page sur le site →
         </Link>
       )}
@@ -149,7 +149,7 @@ function ArchiveButton({ trip }: { trip: AdminTrip }) {
       <input type="hidden" name="archive" value={String(!trip.archived)} />
       <span
         className={`rounded-full px-3 py-1 text-xs font-medium ${
-          trip.archived ? "bg-foreground/10 text-foreground/70" : "bg-green-600/15 text-green-700 dark:text-green-400"
+          trip.archived ? "bg-foreground/10 text-foreground/70" : "bg-green-600/15 text-green-700"
         }`}
       >
         {trip.archived ? "Archivé" : "En ligne"}

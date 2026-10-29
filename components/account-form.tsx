@@ -43,7 +43,7 @@ export function AccountForm({
             required={!field.optional}
             defaultValue={field.defaultValue}
             minLength={field.type === "password" ? 6 : undefined}
-            className="rounded-lg border border-foreground/15 bg-background p-3"
+            className="rounded-lg border border-sand-deep bg-cream p-3"
           />
         </div>
       ))}
@@ -53,14 +53,14 @@ export function AccountForm({
         </p>
       )}
       {state.message && (
-        <p role="status" className="text-sm text-sky-700 dark:text-sky-400">
+        <p role="status" className="text-sm text-clay">
           {state.message}
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-sky-600 px-4 py-3 font-medium text-white hover:bg-sky-700 disabled:opacity-60"
+        className="rounded-full bg-clay px-4 py-3 font-medium text-cream hover:bg-clay-dark disabled:opacity-60"
       >
         {pending ? pendingLabel : submitLabel}
       </button>

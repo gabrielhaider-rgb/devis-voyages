@@ -56,6 +56,7 @@ export type AdminTrip = {
   destination: string;
   durationDays: number;
   description: string;
+  imageUrl: string | null;
   archived: boolean;
   departures: Departure[];
   options: TripOption[];
@@ -67,7 +68,7 @@ export async function getAdminTrip(id: string): Promise<AdminTrip | null> {
   const { data, error } = await supabase
     .from("trips")
     .select(
-      "id, slug, title, destination, duration_days, description, archived_at, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category, exclusive_group)",
+      "id, slug, title, destination, duration_days, description, image_url, archived_at, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category, exclusive_group)",
     )
     .eq("id", id)
     .order("departure_date", { referencedTable: "departures" })
@@ -83,6 +84,7 @@ export async function getAdminTrip(id: string): Promise<AdminTrip | null> {
     destination: data.destination,
     durationDays: data.duration_days,
     description: data.description,
+    imageUrl: data.image_url,
     archived: data.archived_at !== null,
     departures: data.departures.map((d) => ({
       id: d.id,

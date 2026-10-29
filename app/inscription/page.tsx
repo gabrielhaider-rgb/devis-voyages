@@ -41,7 +41,7 @@ async function SignUpContent({ searchParams }: { searchParams: PageProps<"/inscr
       />
       <p className="mt-4 text-sm">
         Déjà un compte ?{" "}
-        <Link href={next ? `/connexion?next=${encodeURIComponent(next)}` : "/connexion"} className="text-sky-600 hover:underline">
+        <Link href={next ? `/connexion?next=${encodeURIComponent(next)}` : "/connexion"} className="text-clay hover:underline">
           Se connecter
         </Link>
       </p>

@@ -8,6 +8,7 @@ const lisbonne: Trip = {
   destination: "Portugal",
   durationDays: 5,
   description: "",
+  imageUrl: null,
   departures: [
     { id: "d-mai", date: "2027-05-12", pricePerPersonCents: 65000 },
     { id: "d-juillet", date: "2027-07-14", pricePerPersonCents: 82000 },

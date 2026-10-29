@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export const inputClass = "w-full rounded-lg border border-foreground/15 bg-background p-2 text-sm";
+export const inputClass = "w-full rounded-lg border border-sand-deep bg-cream p-2 text-sm";
 
 export function Field({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (

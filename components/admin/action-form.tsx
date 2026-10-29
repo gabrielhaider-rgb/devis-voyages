@@ -25,7 +25,7 @@ export function ActionForm({
         </p>
       )}
       {state.message && (
-        <p role="status" className="basis-full text-sm text-green-700 dark:text-green-400">
+        <p role="status" className="basis-full text-sm text-green-700">
           {state.message}
         </p>
       )}
@@ -39,7 +39,7 @@ export function SubmitButton({ children, pendingLabel = "Enregistrement…" }: {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-60"
+      className="rounded-full bg-clay px-4 py-2 text-sm font-medium text-cream hover:bg-clay-dark disabled:opacity-60"
     >
       {pending ? pendingLabel : children}
     </button>
@@ -56,7 +56,7 @@ export function ConfirmButton({ children, question }: { children: ReactNode; que
       onClick={(event) => {
         if (!window.confirm(question)) event.preventDefault();
       }}
-      className="rounded-lg border border-red-600/40 px-3 py-2 text-sm text-red-700 hover:bg-red-600/10 disabled:opacity-60 dark:text-red-400"
+      className="rounded-lg border border-red-600/40 px-3 py-2 text-sm text-red-700 hover:bg-red-600/10 disabled:opacity-60"
     >
       {children}
     </button>

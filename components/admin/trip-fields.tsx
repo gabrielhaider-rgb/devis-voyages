@@ -1,6 +1,13 @@
 import { Field, inputClass } from "@/components/admin/fields";
 
-type TripValues = { slug: string; title: string; destination: string; durationDays: number; description: string };
+type TripValues = {
+  slug: string;
+  title: string;
+  destination: string;
+  durationDays: number;
+  description: string;
+  imageUrl: string | null;
+};
 
 // Champs communs à la création et à la modification d'un voyage.
 export function TripFields({ trip }: { trip?: TripValues }) {
@@ -17,6 +24,9 @@ export function TripFields({ trip }: { trip?: TripValues }) {
       </Field>
       <Field label="Adresse de la page (vide = déduite du titre)">
         <input name="slug" defaultValue={trip?.slug} placeholder="porto-3-jours" className={inputClass} />
+      </Field>
+      <Field label="Photo : adresse de l'image (https://…, facultatif)" className="sm:col-span-2">
+        <input name="image_url" type="url" defaultValue={trip?.imageUrl ?? ""} placeholder="https://images.unsplash.com/…" className={inputClass} />
       </Field>
       <Field label="Description" className="sm:col-span-2">
         <textarea name="description" rows={3} defaultValue={trip?.description} className={inputClass} />

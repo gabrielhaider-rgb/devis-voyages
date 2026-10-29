@@ -15,7 +15,7 @@ const savedOn = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: 
 export default function MyQuotesPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">Mes devis</h1>
+      <h1 className="text-4xl tracking-tight sm:text-5xl">Mes devis</h1>
       <Suspense fallback={<p className="mt-6 text-foreground/70">Chargement de vos devis…</p>}>
         <QuoteList />
       </Suspense>
@@ -33,7 +33,7 @@ async function QuoteList() {
     return (
       <p className="mt-6 text-foreground/70">
         Vous n&apos;avez pas encore enregistré de devis.{" "}
-        <Link href="/" className="text-sky-600 hover:underline">
+        <Link href="/" className="text-clay hover:underline">
           Choisir un voyage
         </Link>
       </p>
@@ -46,7 +46,7 @@ async function QuoteList() {
         <li key={quote.id}>
           <Link
             href={`/mes-devis/${quote.id}`}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-foreground/15 p-4 hover:border-foreground/30"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-sand-deep bg-cream p-4 hover:border-foreground/30"
           >
             <span>
               <span className="block font-medium">{quote.tripTitle}</span>
@@ -55,7 +55,7 @@ async function QuoteList() {
                 {" · "}
                 {quote.travelers} voyageur{quote.travelers > 1 ? "s" : ""}
               </span>
-              <span className="block text-xs text-foreground/60">
+              <span className="block text-xs text-foreground/75">
                 N° {savedQuoteNumber(quote.id, quote.createdAt)} · enregistré le{" "}
                 {savedOn.format(quote.createdAt)}
               </span>

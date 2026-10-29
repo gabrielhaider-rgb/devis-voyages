@@ -30,6 +30,7 @@ export type TripInput = {
   destination: string;
   duration_days: number;
   description: string;
+  image_url: string | null;
 };
 
 export function parseTripForm(form: Record<string, unknown>): Result<TripInput> {
@@ -38,6 +39,7 @@ export function parseTripForm(form: Record<string, unknown>): Result<TripInput> 
   const description = text(form, "description");
   const slug = text(form, "slug") || slugify(title);
   const durationDays = Number(text(form, "duration_days"));
+  const imageUrl = text(form, "image_url");
 
   if (!title) return { ok: false, error: "Le titre est obligatoire." };
   if (!destination) return { ok: false, error: "La destination est obligatoire." };
@@ -47,7 +49,13 @@ export function parseTripForm(form: Record<string, unknown>): Result<TripInput> 
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return { ok: false, error: "L'adresse de la page ne peut contenir que des minuscules, des chiffres et des tirets." };
   }
-  return { ok: true, value: { slug, title, destination, duration_days: durationDays, description } };
+  if (imageUrl && !/^https:\/\/[^\s"'<>]+$/.test(imageUrl)) {
+    return { ok: false, error: "L'adresse de la photo doit commencer par https:// (ex. une image Unsplash)." };
+  }
+  return {
+    ok: true,
+    value: { slug, title, destination, duration_days: durationDays, description, image_url: imageUrl || null },
+  };
 }
 
 export type DepartureInput = { departure_date: string; price_per_person_cents: number };

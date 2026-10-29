@@ -25,14 +25,14 @@ const issueDate = new Intl.DateTimeFormat("fr-FR", {
 // Mise en page du devis, à l'écran comme à l'impression (PDF).
 export function QuoteDocument(quote: QuoteDocumentProps) {
   return (
-    <article className="rounded-xl border border-foreground/15 p-6 sm:p-8 print:rounded-none print:border-0 print:p-0">
-      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-foreground/15 pb-6">
+    <article className="rounded-2xl border border-sand-deep bg-cream p-6 sm:p-8 print:rounded-none print:border-0 print:bg-white print:p-0">
+      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-sand-deep pb-6">
         <div>
-          <p className="text-lg font-semibold text-sky-600">Devis voyages</p>
+          <p className="font-display text-2xl font-semibold text-clay">Devis voyages</p>
           <p className="text-sm text-foreground/70">Tour-opérateur</p>
         </div>
         <div className="text-sm sm:text-right">
-          <h1 className="text-2xl font-semibold">Devis</h1>
+          <h1 className="text-3xl">Devis</h1>
           <p>N° {quote.number}</p>
           <p className="text-foreground/70">Établi le {issueDate.format(quote.issuedAt)}</p>
         </div>
@@ -62,7 +62,7 @@ export function QuoteDocument(quote: QuoteDocumentProps) {
 
       <table className="mt-8 w-full text-sm">
         <thead>
-          <tr className="border-b border-foreground/15 text-left text-foreground/70">
+          <tr className="border-b border-sand-deep text-left text-foreground/70">
             <th className="pb-2 font-medium">Désignation</th>
             <th className="pb-2 font-medium">Détail</th>
             <th className="pb-2 text-right font-medium">Montant</th>
@@ -98,7 +98,7 @@ export function QuoteDocument(quote: QuoteDocumentProps) {
         </section>
       )}
 
-      <p className="mt-8 border-t border-foreground/15 pt-4 text-xs text-foreground/60">
+      <p className="mt-8 border-t border-sand-deep pt-4 text-xs text-foreground/75">
         Devis indicatif, sans engagement. Prix en euros, toutes taxes comprises. La réservation
         se fait auprès de l&apos;agence.
       </p>

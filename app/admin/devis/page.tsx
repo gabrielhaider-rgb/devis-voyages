@@ -30,7 +30,7 @@ async function QuotesDashboard() {
       <AdminHeader active="devis" />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">Tableau de bord des devis</h1>
-        <Link href="/admin/devis/liste" className="rounded-lg border border-foreground/15 px-4 py-2 text-sm hover:border-foreground/30">
+        <Link href="/admin/devis/liste" className="rounded-lg border border-sand-deep px-4 py-2 text-sm hover:border-foreground/30">
           Voir la liste des devis
         </Link>
       </div>
@@ -45,13 +45,13 @@ async function QuotesDashboard() {
           detail={`${dashboard.accessibility.count} devis sur ${dashboard.count}`}
         />
       </dl>
-      <p className="mt-2 text-xs text-foreground/60">
+      <p className="mt-2 text-xs text-foreground/75">
         Les devis enregistrés avant la V4 sont comptés sans accessibilité payante (information non enregistrée à l&apos;époque).
       </p>
 
       <section className="mt-10">
         <h2 className="text-xl font-semibold">Devis par mois (12 derniers mois)</h2>
-        <div className="mt-4 rounded-xl border border-foreground/15 p-4">
+        <div className="mt-4 rounded-2xl border border-sand-deep bg-cream p-4">
           <MonthlyChart months={dashboard.byMonth} />
         </div>
       </section>
@@ -63,7 +63,7 @@ async function QuotesDashboard() {
         ) : (
           <table className="mt-4 w-full text-sm">
             <thead>
-              <tr className="border-b border-foreground/15 text-left text-foreground/70">
+              <tr className="border-b border-sand-deep text-left text-foreground/70">
                 <th className="pb-2 font-medium">Voyage</th>
                 <th className="pb-2 text-right font-medium">Devis</th>
                 <th className="pb-2 text-right font-medium">Montant total</th>
@@ -87,10 +87,10 @@ async function QuotesDashboard() {
 
 function Stat({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
-    <div className="rounded-xl border border-foreground/15 p-4">
+    <div className="rounded-2xl border border-sand-deep bg-cream p-4">
       <dt className="text-sm text-foreground/70">{label}</dt>
       <dd className="mt-1 text-2xl font-semibold">{value}</dd>
-      {detail && <dd className="text-xs text-foreground/60">{detail}</dd>}
+      {detail && <dd className="text-xs text-foreground/75">{detail}</dd>}
     </div>
   );
 }

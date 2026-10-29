@@ -42,16 +42,16 @@ async function ClientDetail({ id }: { id: string }) {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">{client.name}</h1>
           <p className="mt-2 text-sm">
-            <a href={`mailto:${client.email}`} className="text-sky-600 hover:underline">
+            <a href={`mailto:${client.email}`} className="text-clay hover:underline">
               {client.email}
             </a>
             {" · "}
             {client.phone ? (
-              <a href={`tel:${client.phone.replace(/[^\d+]/g, "")}`} className="text-sky-600 hover:underline">
+              <a href={`tel:${client.phone.replace(/[^\d+]/g, "")}`} className="text-clay hover:underline">
                 {client.phone}
               </a>
             ) : (
-              <span className="text-foreground/60">pas de téléphone</span>
+              <span className="text-foreground/75">pas de téléphone</span>
             )}
           </p>
           <p className="text-sm text-foreground/70">Inscrit le {joinedOn.format(client.createdAt)}</p>

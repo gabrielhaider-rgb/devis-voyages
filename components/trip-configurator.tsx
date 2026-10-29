@@ -70,12 +70,12 @@ export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: Init
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
       <div className="flex flex-col gap-8">
         <fieldset>
-          <legend className="mb-3 text-lg font-semibold">Date de départ</legend>
+          <legend className="mb-3 font-display text-2xl">Date de départ</legend>
           <div className="flex flex-col gap-2">
             {trip.departures.map((d) => (
               <label
                 key={d.id}
-                className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-foreground/15 p-3 has-checked:border-sky-600 has-checked:bg-sky-600/5"
+                className="flex cursor-pointer items-center justify-between gap-4 rounded-full border border-sand-deep p-3 has-checked:border-clay has-checked:bg-clay/5"
               >
                 <span className="flex items-center gap-3">
                   <input
@@ -84,7 +84,7 @@ export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: Init
                     value={d.id}
                     checked={d.id === departure.id}
                     onChange={() => setDepartureId(d.id)}
-                    className="accent-sky-600"
+                    className="accent-clay"
                   />
                   <span className="first-letter:uppercase">{formatDate(d.date)}</span>
                 </span>
@@ -97,14 +97,14 @@ export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: Init
         </fieldset>
 
         <div>
-          <label htmlFor="travelers" className="mb-3 block text-lg font-semibold">
+          <label htmlFor="travelers" className="mb-3 block font-display text-2xl">
             Nombre de voyageurs
           </label>
           <select
             id="travelers"
             value={travelers}
             onChange={(e) => setTravelers(Number(e.target.value))}
-            className="rounded-lg border border-foreground/15 bg-background p-3"
+            className="rounded-lg border border-sand-deep bg-cream p-3"
           >
             {Array.from({ length: MAX_TRAVELERS }, (_, i) => i + 1).map((n) => (
               <option key={n} value={n}>
@@ -132,14 +132,14 @@ export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: Init
         />
       </div>
 
-      <aside className="h-fit rounded-xl border border-foreground/15 p-5 lg:sticky lg:top-6">
-        <h2 className="text-lg font-semibold">Votre prix</h2>
+      <aside className="h-fit rounded-2xl border border-sand-deep bg-cream p-5 lg:sticky lg:top-6">
+        <h2 className="text-2xl">Votre prix</h2>
         <ul className="mt-4 flex flex-col gap-3 text-sm">
           {quote.lines.map((line) => (
             <li key={line.label} className="flex justify-between gap-4">
               <span>
                 {line.label}
-                <span className="block text-foreground/60">{line.detail}</span>
+                <span className="block text-foreground/75">{line.detail}</span>
               </span>
               <span className="whitespace-nowrap">
                 {line.amountCents === 0 ? "Inclus" : formatPrice(line.amountCents)}
@@ -148,7 +148,7 @@ export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: Init
           ))}
         </ul>
         <p
-          className="mt-4 flex justify-between border-t border-foreground/15 pt-4 text-lg font-semibold"
+          className="mt-4 flex justify-between border-t border-sand-deep pt-4 text-xl font-semibold"
           aria-live="polite"
         >
           <span>Total</span>
@@ -156,7 +156,7 @@ export function TripConfigurator({ trip, initial }: { trip: Trip; initial?: Init
         </p>
         <Link
           href={`/devis?${quoteParams}`}
-          className="mt-5 block rounded-lg bg-sky-600 px-4 py-3 text-center font-medium text-white hover:bg-sky-700"
+          className="mt-5 block rounded-full bg-clay px-4 py-3 text-center font-medium text-cream hover:bg-clay-dark"
         >
           Voir mon devis
         </Link>
@@ -198,20 +198,20 @@ function OptionGroup({
 
   return (
     <fieldset>
-      <legend className="mb-1 text-lg font-semibold">{title}</legend>
+      <legend className="mb-1 font-display text-2xl">{title}</legend>
       {description && <p className="mb-3 text-sm text-foreground/70">{description}</p>}
       <div className="mt-2 flex flex-col gap-2">
         {paidOptions.map((option) => (
           <label
             key={option.id}
-            className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-foreground/15 p-3 has-checked:border-sky-600 has-checked:bg-sky-600/5"
+            className="flex cursor-pointer items-center justify-between gap-4 rounded-full border border-sand-deep p-3 has-checked:border-clay has-checked:bg-clay/5"
           >
             <span className="flex items-center gap-3">
               <input
                 type="checkbox"
                 checked={selectedIds.includes(option.id)}
                 onChange={() => onToggle(option)}
-                className="accent-sky-600"
+                className="accent-clay"
               />
               <span>
                 {option.label}
@@ -228,11 +228,11 @@ function OptionGroup({
       </div>
       {includedOptions.length > 0 && (
         <div className="mt-4">
-          <p className="mb-2 text-sm font-medium">Inclus dans le voyage, sans supplément :</p>
+          <p className="mb-2 text-sm font-semibold">Inclus dans le voyage, sans supplément :</p>
           <ul className="flex flex-col gap-1 text-sm text-foreground/80">
             {includedOptions.map((option) => (
               <li key={option.id} className="flex items-center gap-2">
-                <span aria-hidden="true" className="text-sky-600">✓</span>
+                <span aria-hidden="true" className="text-clay">✓</span>
                 {option.label}
               </li>
             ))}
@@ -256,7 +256,7 @@ function NotCumulativeWith({
   if (others.length === 0) return null;
 
   return (
-    <span className="block text-xs text-foreground/60">
+    <span className="block text-xs text-foreground/75">
       Non cumulable avec : {others.map((o) => o.label).join(", ")}
     </span>
   );

@@ -31,7 +31,7 @@ async function AdminList() {
       <h1 className="text-3xl font-semibold tracking-tight">Admins</h1>
       <p className="mt-2 text-sm text-foreground/70">
         Pour nommer un admin, ouvrez sa fiche dans l&apos;onglet{" "}
-        <Link href="/admin/clients" className="text-sky-600 hover:underline">
+        <Link href="/admin/clients" className="text-clay hover:underline">
           Clients
         </Link>
         . Vous ne pouvez pas retirer votre propre rôle.
@@ -41,13 +41,13 @@ async function AdminList() {
         {admins.map((admin) => {
           const isMe = admin.id === me.id;
           return (
-            <li key={admin.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-foreground/15 p-3">
+            <li key={admin.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sand-deep bg-cream p-3">
               <span className="text-sm">
                 <span className="font-medium">{admin.name}</span>
-                {isMe && <span className="text-foreground/60"> (vous)</span>}
+                {isMe && <span className="text-foreground/75"> (vous)</span>}
                 <span className="block text-foreground/70">{admin.email}</span>
                 {admin.adminSince && (
-                  <span className="block text-xs text-foreground/60">Admin depuis le {since.format(admin.adminSince)}</span>
+                  <span className="block text-xs text-foreground/75">Admin depuis le {since.format(admin.adminSince)}</span>
                 )}
               </span>
               {!isMe && (

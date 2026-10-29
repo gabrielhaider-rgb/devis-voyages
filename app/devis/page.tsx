@@ -34,12 +34,12 @@ async function QuoteContent({
 
   if (!trip || !resolved.ok) {
     return (
-      <div className="rounded-xl border border-foreground/15 p-6">
+      <div className="rounded-2xl border border-sand-deep bg-cream p-6">
         <h1 className="text-xl font-semibold">Impossible d&apos;établir ce devis</h1>
         <p className="mt-2 text-foreground/80">{resolved.ok ? "" : resolved.reason}</p>
         <Link
           href={trip ? `/voyages/${trip.slug}` : "/"}
-          className="mt-4 inline-block text-sky-600 hover:underline"
+          className="mt-4 inline-block text-clay hover:underline"
         >
           {trip ? "← Revenir à la configuration du voyage" : "← Voir tous les voyages"}
         </Link>
@@ -69,7 +69,7 @@ async function QuoteContent({
             <input type="hidden" name="options" value={options.map((o) => o.id).join(",")} />
             <button
               type="submit"
-              className="rounded-lg border border-sky-600 px-4 py-2 font-medium text-sky-700 hover:bg-sky-600/10 dark:text-sky-400"
+              className="rounded-full border border-clay px-4 py-2 font-medium text-clay hover:bg-clay/10"
             >
               Enregistrer ce devis
             </button>

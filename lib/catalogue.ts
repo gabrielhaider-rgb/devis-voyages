@@ -8,6 +8,8 @@ export type TripSummary = {
   title: string;
   destination: string;
   durationDays: number;
+  pitch: string;
+  imageUrl: string | null;
   // Prochain départ à venir (null s'il n'y en a plus).
   nextDeparture: { date: string; pricePerPersonCents: number } | null;
 };
@@ -34,6 +36,7 @@ export type Trip = {
   destination: string;
   durationDays: number;
   description: string;
+  imageUrl: string | null;
   departures: Departure[];
   options: TripOption[];
 };
@@ -58,7 +61,7 @@ export async function getTrips(): Promise<TripSummary[]> {
   const { data, error } = await createCatalogueClient()
     .from("trips")
     .select(
-      "slug, title, destination, duration_days, departures(departure_date, price_per_person_cents)",
+      "slug, title, destination, duration_days, description, image_url, departures(departure_date, price_per_person_cents)",
     )
     .is("archived_at", null)
     .order("title");
@@ -72,6 +75,9 @@ export async function getTrips(): Promise<TripSummary[]> {
     title: trip.title,
     destination: trip.destination,
     durationDays: trip.duration_days,
+    // Accroche des cartes : la première phrase de la description.
+    pitch: trip.description.split(/(?<=[.!?])\s/)[0],
+    imageUrl: trip.image_url,
     nextDeparture: nextDeparture(
       trip.departures.map((d) => ({ date: d.departure_date, pricePerPersonCents: d.price_per_person_cents })),
       today,
@@ -87,7 +93,7 @@ export async function getTrip(slug: string): Promise<Trip | null> {
   const { data, error } = await createCatalogueClient()
     .from("trips")
     .select(
-      "slug, title, destination, duration_days, description, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category, exclusive_group)",
+      "slug, title, destination, duration_days, description, image_url, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category, exclusive_group)",
     )
     .eq("slug", slug)
     .is("archived_at", null)
@@ -104,6 +110,7 @@ export async function getTrip(slug: string): Promise<Trip | null> {
     destination: data.destination,
     durationDays: data.duration_days,
     description: data.description,
+    imageUrl: data.image_url,
     departures: data.departures.map((d) => ({
       id: d.id,
       date: d.departure_date,

@@ -26,7 +26,7 @@ async function TripList() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">Catalogue</h1>
         <div className="flex gap-3 text-sm">
-          <Link href="/admin/voyages/nouveau" className="rounded-lg bg-sky-600 px-4 py-2 font-medium text-white hover:bg-sky-700">
+          <Link href="/admin/voyages/nouveau" className="rounded-full bg-clay px-4 py-2 font-medium text-cream hover:bg-clay-dark">
             Nouveau voyage
           </Link>
         </div>
@@ -37,7 +37,7 @@ async function TripList() {
           <li key={trip.id}>
             <Link
               href={`/admin/voyages/${trip.id}`}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-foreground/15 p-4 hover:border-foreground/30"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-sand-deep bg-cream p-4 hover:border-foreground/30"
             >
               <span>
                 <span className="block font-medium">{trip.title}</span>
@@ -48,7 +48,7 @@ async function TripList() {
               </span>
               <span
                 className={`rounded-full px-3 py-1 text-xs font-medium ${
-                  trip.archived ? "bg-foreground/10 text-foreground/70" : "bg-green-600/15 text-green-700 dark:text-green-400"
+                  trip.archived ? "bg-foreground/10 text-foreground/70" : "bg-green-600/15 text-green-700"
                 }`}
               >
                 {trip.archived ? "Archivé" : "En ligne"}

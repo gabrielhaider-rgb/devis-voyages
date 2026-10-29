@@ -13,7 +13,7 @@ export function QuoteTable({ quotes, showClient = true }: { quotes: AdminQuote[]
     <div className="mt-4 overflow-x-auto">
       <table className="w-full min-w-[40rem] text-sm">
         <thead>
-          <tr className="border-b border-foreground/15 text-left text-foreground/70">
+          <tr className="border-b border-sand-deep text-left text-foreground/70">
             <th className="pb-2 font-medium">Date</th>
             <th className="pb-2 font-medium">Numéro</th>
             {showClient && <th className="pb-2 font-medium">Client</th>}
@@ -28,7 +28,7 @@ export function QuoteTable({ quotes, showClient = true }: { quotes: AdminQuote[]
             <tr key={quote.id} className="border-b border-foreground/10 hover:bg-foreground/5">
               <td className="py-2 pr-3 whitespace-nowrap">{savedOn.format(quote.createdAt)}</td>
               <td className="py-2 pr-3 whitespace-nowrap">
-                <Link href={`/admin/devis/${quote.id}`} className="text-sky-600 hover:underline">
+                <Link href={`/admin/devis/${quote.id}`} className="text-clay hover:underline">
                   {savedQuoteNumber(quote.id, quote.createdAt)}
                 </Link>
               </td>

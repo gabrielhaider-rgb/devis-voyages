@@ -16,7 +16,7 @@ export function MonthlyChart({ months }: { months: Dashboard["byMonth"] }) {
               </span>
             )}
             <div
-              className="mx-auto w-3/5 max-w-6 rounded-t-[4px] bg-sky-600 group-hover:bg-sky-700 dark:bg-sky-400 dark:group-hover:bg-sky-300"
+              className="mx-auto w-3/5 max-w-6 rounded-t-[4px] bg-clay group-hover:bg-clay-dark"
               style={{ height: `${(m.count / max) * 85}%` }}
             />
           </div>
@@ -24,7 +24,7 @@ export function MonthlyChart({ months }: { months: Dashboard["byMonth"] }) {
       </div>
       <div className="mt-1 flex gap-[2px]" aria-hidden="true">
         {months.map((m, i) => (
-          <span key={m.key} className="flex-1 text-center text-[10px] text-foreground/60">
+          <span key={m.key} className="flex-1 text-center text-[10px] text-foreground/75">
             {/* Un mois sur deux sur petit écran, pour éviter les chevauchements. */}
             <span className={i % 2 === 1 ? "hidden sm:inline" : ""}>{m.label}</span>
           </span>

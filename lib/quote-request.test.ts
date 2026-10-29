@@ -8,6 +8,7 @@ const trip: Trip = {
   destination: "Portugal",
   durationDays: 5,
   description: "",
+  imageUrl: null,
   departures: [{ id: "d1", date: "2027-05-12", pricePerPersonCents: 65000 }],
   options: [
     { id: "transfert", label: "Transfert aéroport", priceCents: 6000, pricingType: "fixed", category: "standard", exclusiveGroup: "transfert" },

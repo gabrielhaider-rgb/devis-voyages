@@ -26,7 +26,7 @@ async function QuoteList() {
       <AdminHeader active="devis" />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">Liste des devis</h1>
-        <Link href="/admin/devis" className="rounded-lg border border-foreground/15 px-4 py-2 text-sm hover:border-foreground/30">
+        <Link href="/admin/devis" className="rounded-lg border border-sand-deep px-4 py-2 text-sm hover:border-foreground/30">
           Tableau de bord
         </Link>
       </div>

@@ -37,24 +37,24 @@ async function AdminQuote({ id }: { id: string }) {
           </Link>
           <PrintButton />
         </div>
-        <section className="mb-6 rounded-xl border border-sky-600/30 bg-sky-600/5 p-4 text-sm">
+        <section className="mb-6 rounded-xl border border-clay/30 bg-clay/5 p-4 text-sm">
           <h2 className="font-semibold">Client</h2>
           <p className="mt-1">{quote.client.name}</p>
           <p>
-            <a href={`mailto:${quote.client.email}`} className="text-sky-600 hover:underline">
+            <a href={`mailto:${quote.client.email}`} className="text-clay hover:underline">
               {quote.client.email}
             </a>
           </p>
           <p>
             {quote.client.phone ? (
-              <a href={`tel:${quote.client.phone.replace(/[^\d+]/g, "")}`} className="text-sky-600 hover:underline">
+              <a href={`tel:${quote.client.phone.replace(/[^\d+]/g, "")}`} className="text-clay hover:underline">
                 {quote.client.phone}
               </a>
             ) : (
-              <span className="text-foreground/60">Pas de téléphone renseigné</span>
+              <span className="text-foreground/75">Pas de téléphone renseigné</span>
             )}
           </p>
-          <Link href={`/admin/clients/${quote.client.id}`} className="mt-2 inline-block text-sky-600 hover:underline">
+          <Link href={`/admin/clients/${quote.client.id}`} className="mt-2 inline-block text-clay hover:underline">
             Voir la fiche client →
           </Link>
         </section>

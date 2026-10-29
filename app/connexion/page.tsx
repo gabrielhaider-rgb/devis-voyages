@@ -42,12 +42,12 @@ async function LoginContent({ searchParams }: { searchParams: PageProps<"/connex
         ]}
       />
       <div className="mt-4 flex flex-col gap-2 text-sm">
-        <Link href="/mot-de-passe-oublie" className="text-sky-600 hover:underline">
+        <Link href="/mot-de-passe-oublie" className="text-clay hover:underline">
           Mot de passe oublié ?
         </Link>
         <p>
           Pas encore de compte ?{" "}
-          <Link href={`/inscription${query}`} className="text-sky-600 hover:underline">
+          <Link href={`/inscription${query}`} className="text-clay hover:underline">
             Créer un compte
           </Link>
         </p>

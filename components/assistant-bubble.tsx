@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { ChatMessage } from "@/lib/assistant/agent";
 import type { Proposal } from "@/lib/assistant/configuration";
 import { MAX_MESSAGE_LENGTH } from "@/lib/assistant/limits";
+import { OPEN_ASSISTANT_EVENT } from "@/components/open-assistant-button";
 import { formatPrice, formatShortDate } from "@/lib/price";
 
 type Entry = ChatMessage & { proposal?: Proposal | null };
@@ -35,6 +36,13 @@ export function AssistantBubble() {
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
+
+  // « Me faire conseiller » (accueil) ouvre la bulle.
+  useEffect(() => {
+    const openBubble = () => setOpen(true);
+    window.addEventListener(OPEN_ASSISTANT_EVENT, openBubble);
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, openBubble);
+  }, []);
 
   if (HIDDEN_ON.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return null;
 
@@ -73,7 +81,7 @@ export function AssistantBubble() {
         <section
           role="dialog"
           aria-label="Assistant voyages"
-          className="flex h-[min(32rem,calc(100dvh-6rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-foreground/15 bg-background shadow-xl"
+          className="flex h-[min(32rem,calc(100dvh-6rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-sand-deep bg-cream shadow-xl"
         >
           <header className="flex items-center justify-between border-b border-foreground/10 px-4 py-3">
             <h2 className="font-semibold">Assistant voyages</h2>
@@ -85,7 +93,7 @@ export function AssistantBubble() {
                     setEntries([]);
                     setError(null);
                   }}
-                  className="text-foreground/60 hover:underline"
+                  className="text-foreground/75 hover:underline"
                 >
                   Nouvelle conversation
                 </button>
@@ -104,7 +112,7 @@ export function AssistantBubble() {
                 {entry.proposal && <ProposalCard proposal={entry.proposal} />}
               </div>
             ))}
-            {pending && <p className="text-foreground/60">L&apos;assistant réfléchit…</p>}
+            {pending && <p className="text-foreground/75">L&apos;assistant réfléchit…</p>}
             {error && (
               <p role="alert" className="text-red-600">
                 {error}
@@ -127,17 +135,17 @@ export function AssistantBubble() {
                 if (e.key === "Enter" && !e.shiftKey) send(e);
               }}
               placeholder="Ex. : 2 adultes, Lisbonne en mai"
-              className="flex-1 resize-none rounded-lg border border-foreground/15 bg-background p-2"
+              className="flex-1 resize-none rounded-lg border border-sand-deep bg-cream p-2"
             />
             <button
               type="submit"
               disabled={pending || !input.trim()}
-              className="rounded-lg bg-sky-600 px-3 py-2 font-medium text-white hover:bg-sky-700 disabled:opacity-50"
+              className="rounded-full bg-clay px-3 py-2 font-medium text-cream hover:bg-clay-dark disabled:opacity-50"
             >
               Envoyer
             </button>
           </form>
-          <p className="px-3 pb-2 text-[11px] text-foreground/50">
+          <p className="px-3 pb-2 text-[11px] text-foreground/75">
             Réponses générées par une IA : vérifiez la configuration avant d&apos;ouvrir votre devis.
           </p>
         </section>
@@ -147,7 +155,7 @@ export function AssistantBubble() {
         type="button"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
-        className="rounded-full bg-sky-600 px-5 py-3 font-medium text-white shadow-lg hover:bg-sky-700"
+        className="rounded-full bg-clay px-5 py-3 font-medium text-cream shadow-lg hover:bg-clay-dark"
       >
         {open ? "Fermer" : "Besoin d'aide ?"}
       </button>
@@ -159,7 +167,7 @@ function Bubble({ role, children }: { role: ChatMessage["role"]; children: strin
   return (
     <p
       className={`max-w-[85%] whitespace-pre-line rounded-2xl px-3 py-2 ${
-        role === "user" ? "self-end bg-sky-600 text-white" : "self-start bg-foreground/5"
+        role === "user" ? "self-end bg-clay text-cream" : "self-start bg-foreground/5"
       }`}
     >
       {children}
@@ -169,7 +177,7 @@ function Bubble({ role, children }: { role: ChatMessage["role"]; children: strin
 
 function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (
-    <div className="self-start rounded-xl border border-sky-600/40 p-3">
+    <div className="self-start rounded-xl border border-clay/40 p-3">
       <p className="font-medium">{proposal.tripTitle}</p>
       <p className="text-foreground/70">
         Départ le {formatShortDate(proposal.departureDate)} · {proposal.travelers} voyageur
@@ -179,7 +187,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
       <p className="mt-1 font-semibold">{formatPrice(proposal.totalCents)}</p>
       <Link
         href={proposal.configureUrl}
-        className="mt-2 inline-block rounded-lg bg-sky-600 px-3 py-1.5 font-medium text-white hover:bg-sky-700"
+        className="mt-2 inline-block rounded-full bg-clay px-3 py-1.5 font-medium text-cream hover:bg-clay-dark"
       >
         Voir et ajuster
       </Link>

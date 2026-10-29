@@ -5,25 +5,36 @@ import { getCurrentUser } from "@/lib/auth";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-foreground/10 print:hidden">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="font-semibold text-sky-600">
+    <header className="print:hidden">
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-5 sm:px-8">
+        <Link href="/" className="font-display text-2xl font-semibold text-ink">
           Devis voyages
         </Link>
-        <Suspense fallback={<span className="h-5" />}>
-          <UserMenu />
-        </Suspense>
+        <nav aria-label="Navigation principale" className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
+          <Link href="/#voyages" className="hidden hover:text-clay sm:inline">
+            Destinations
+          </Link>
+          <Link href="/#accessibilite" className="hidden hover:text-clay sm:inline">
+            Voyager accessible
+          </Link>
+          <Suspense fallback={<span className="h-11" />}>
+            <UserMenu />
+          </Suspense>
+        </nav>
       </div>
     </header>
   );
 }
+
+const pill =
+  "inline-flex min-h-11 items-center rounded-full border-[1.5px] border-ink px-4 font-medium hover:bg-ink hover:text-background";
 
 async function UserMenu() {
   const user = await getCurrentUser();
 
   if (!user) {
     return (
-      <Link href="/connexion" className="text-sm hover:underline">
+      <Link href="/connexion" className={pill}>
         Se connecter
       </Link>
     );
@@ -32,32 +43,29 @@ async function UserMenu() {
   const admin = await isAdmin(user);
 
   return (
-    <nav className="flex items-center gap-4 text-sm">
+    <>
       {admin && (
-        <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300">
-          Administrateur
-        </span>
-      )}
-      <span className="hidden text-foreground/60 sm:inline">{user.email}</span>
-      {admin && (
-        <Link href="/admin" className="font-medium hover:underline">
-          Admin
-        </Link>
+        <>
+          <span className="rounded-full bg-clay/15 px-2.5 py-0.5 text-xs font-semibold text-clay-dark">Administrateur</span>
+          <Link href="/admin" className="font-medium hover:text-clay">
+            Admin
+          </Link>
+        </>
       )}
       {/* Un admin suit les devis dans l'administration : pas de « Mes devis » pour lui. */}
       {!admin && (
-        <Link href="/mes-devis" className="font-medium hover:underline">
+        <Link href="/mes-devis" className="font-medium hover:text-clay">
           Mes devis
         </Link>
       )}
-      <Link href="/mon-profil" className="hover:underline">
+      <Link href="/mon-profil" className="hover:text-clay" title={user.email ?? undefined}>
         Mon profil
       </Link>
       <form action="/auth/deconnexion" method="post">
-        <button type="submit" className="text-foreground/70 hover:underline">
+        <button type="submit" className={pill}>
           Se déconnecter
         </button>
       </form>
-    </nav>
+    </>
   );
 }
