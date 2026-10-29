@@ -258,4 +258,4 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V3 : texte d'abord, la voix ensuite | Livrer un assistant fiable avant d'ajouter la voix | La voix fera l'objet d'une étape suivante |
 | 29/10/2026 | V3 : bulle de discussion sur toutes les pages | Aide visible partout dans le parcours | Masquée dans l'administration et à l'impression |
 | 29/10/2026 | Design « Carnet de voyage » (piste A) sur tout le site | Donner envie de voyager : tons sable et terre cuite, titres Fraunces, photos | Site toujours clair (pas de mode sombre) ; contrastes vérifiés (texte ≥ 4,5:1) ; PDF sur fond blanc |
-| 29/10/2026 | Photos des voyages par adresse d'image saisie dans l'admin | Simple, sans stockage de fichiers | Un aplat de couleur avec la destination s'affiche tant qu'aucune photo n'est renseignée |
+| 29/10/2026 | Photos des voyages par adresse saisie dans l'admin | Simple, sans stockage de fichiers | Une page Unsplash est convertie en adresse d'image à l'enregistrement ; une adresse qui n'affiche pas d'image est refusée ; un aplat de couleur s'affiche sans photo |

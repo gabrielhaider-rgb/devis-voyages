@@ -25,8 +25,8 @@ export function TripFields({ trip }: { trip?: TripValues }) {
       <Field label="Adresse de la page (vide = déduite du titre)">
         <input name="slug" defaultValue={trip?.slug} placeholder="porto-3-jours" className={inputClass} />
       </Field>
-      <Field label="Photo : adresse de l'image (https://…, facultatif)" className="sm:col-span-2">
-        <input name="image_url" type="url" defaultValue={trip?.imageUrl ?? ""} placeholder="https://images.unsplash.com/…" className={inputClass} />
+      <Field label="Photo : adresse d'une page Unsplash ou d'une image (https://…, facultatif)" className="sm:col-span-2">
+        <input name="image_url" type="url" defaultValue={trip?.imageUrl ?? ""} placeholder="https://unsplash.com/fr/photos/…" className={inputClass} />
       </Field>
       <Field label="Description" className="sm:col-span-2">
         <textarea name="description" rows={3} defaultValue={trip?.description} className={inputClass} />

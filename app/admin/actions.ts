@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/admin";
 import { parseDepartureForm, parseOptionForm, parseTripForm } from "@/lib/admin-validation";
 import { CATALOGUE_TAG } from "@/lib/catalogue";
 import { createClient } from "@/lib/supabase/server";
+import { resolveTripImage } from "@/lib/trip-image";
 
 // Messages des erreurs de la base traduits pour l'admin.
 function frenchError(error: { code?: string; message: string }) {
@@ -31,9 +32,19 @@ function fields(formData: FormData) {
 
 // --- Voyages -----------------------------------------------------------------
 
+// Valide le formulaire d'un voyage et vérifie que la photo est bien une image
+// (une page Unsplash est convertie en adresse d'image directe).
+async function readTripForm(formData: FormData) {
+  const parsed = parseTripForm(fields(formData));
+  if (!parsed.ok || !parsed.value.image_url) return parsed;
+  const image = await resolveTripImage(parsed.value.image_url);
+  if (!image.ok) return image;
+  return { ok: true as const, value: { ...parsed.value, image_url: image.url } };
+}
+
 export async function createTrip(_: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
-  const parsed = parseTripForm(fields(formData));
+  const parsed = await readTripForm(formData);
   if (!parsed.ok) return { error: parsed.error };
 
   const supabase = await createClient();
@@ -51,7 +62,7 @@ export async function createTrip(_: FormState, formData: FormData): Promise<Form
 
 export async function updateTrip(_: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
-  const parsed = parseTripForm(fields(formData));
+  const parsed = await readTripForm(formData);
   if (!parsed.ok) return { error: parsed.error };
 
   const supabase = await createClient();
