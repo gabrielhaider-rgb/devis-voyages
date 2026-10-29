@@ -163,7 +163,17 @@ function OptionGroup({
   if (options.length === 0) return null;
 
   // Une option à 0 € est incluse dans le voyage : on l'affiche, sans case à cocher.
-  const paidOptions = options.filter((o) => o.priceCents > 0);
+  // Une option non cumulable disparaît tant qu'une autre option de son groupe est choisie,
+  // pour qu'on ne puisse pas croire qu'il faut prendre les deux.
+  const replacedBySelection = (option: TripOption) =>
+    !selectedIds.includes(option.id) &&
+    allOptions.some(
+      (o) =>
+        selectedIds.includes(o.id) &&
+        option.exclusiveGroup !== null &&
+        o.exclusiveGroup === option.exclusiveGroup,
+    );
+  const paidOptions = options.filter((o) => o.priceCents > 0 && !replacedBySelection(o));
   const includedOptions = options.filter((o) => o.priceCents === 0);
 
   return (
