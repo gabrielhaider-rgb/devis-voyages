@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { signOut } from "@/app/compte/actions";
 import { isAdmin } from "@/lib/admin";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -51,7 +50,7 @@ async function UserMenu() {
       <Link href="/mon-profil" className="hover:underline">
         Mon profil
       </Link>
-      <form action={signOut}>
+      <form action="/auth/deconnexion" method="post">
         <button type="submit" className="text-foreground/70 hover:underline">
           Se déconnecter
         </button>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { PrintButton } from "@/components/print-button";
 import { QuoteDocument, savedQuoteNumber } from "@/components/quote-document";
+import { isAdmin } from "@/lib/admin";
 import { getCurrentUser } from "@/lib/auth";
 import { getMyProfile } from "@/lib/profile";
 import { displayName } from "@/lib/profile-validation";
@@ -27,7 +28,9 @@ async function SavedQuote({ id }: { id: string }) {
   const user = await getCurrentUser();
   if (!user) redirect(`/connexion?next=/mes-devis/${encodeURIComponent(id)}`);
   const [quote, profile] = await Promise.all([getMyQuote(user.id, id), getMyProfile(user.id)]);
-  if (!quote) notFound();
+  // Devis d'un autre compte (ex. lien ouvert après avoir changé de compte) :
+  // un admin le retrouve dans l'administration, un client revient à ses devis.
+  if (!quote) redirect((await isAdmin(user)) ? `/admin/devis/${encodeURIComponent(id)}` : "/mes-devis");
 
   return (
     <>

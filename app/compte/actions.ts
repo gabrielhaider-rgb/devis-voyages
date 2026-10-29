@@ -115,9 +115,3 @@ export async function updateProfile(_: FormState, formData: FormData): Promise<F
   if (error) return { error: "L'enregistrement a échoué. Réessayez." };
   return { message: "Profil enregistré." };
 }
-
-export async function signOut() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  redirect("/");
-}
