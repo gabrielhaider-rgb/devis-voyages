@@ -52,6 +52,8 @@ Parcours **sans compte** :
 
 Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **incluse dans le voyage**. Elle s'affiche dans une liste « Inclus dans le voyage, sans supplément », sans case à cocher, et n'entre pas dans le calcul du devis.
 
+**Options non cumulables** : certaines options s'excluent (ex. « Transfert aéroport » et « Transfert en véhicule adapté » : c'est l'un ou l'autre ; en Islande, « Location d'un 4x4 » et « Véhicule adapté avec chauffeur »). Elles partagent un même groupe (`exclusive_group`) ; cocher l'une décoche l'autre, et chacune affiche « Non cumulable avec : … ».
+
 > Pour la démo, la configuration passe de la page voyage à la page devis par l'URL (paramètres de requête). Rien n'est enregistré en base.
 
 ### V1.1 — après la démo
@@ -110,7 +112,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 |---|---|---|
 | `trips` | `id`, `slug`, `title`, `destination`, `duration_days`, `description`, `image_url` | Démo |
 | `departures` | `id`, `trip_id`, `departure_date`, `price_per_person_cents` | Démo |
-| `options` | `id`, `trip_id`, `label`, `price_cents`, `pricing_type` (`fixed` ou `per_person`), `category` (`standard` ou `accessibility`) | Démo |
+| `options` | `id`, `trip_id`, `label`, `price_cents`, `pricing_type` (`fixed` ou `per_person`), `category` (`standard` ou `accessibility`), `exclusive_group` (options non cumulables) | Démo |
 | `quotes` | `id`, `user_id`, `departure_id`, `travelers`, `option_ids`, `total_cents`, `created_at` | V1.1 |
 | `profiles` | `id` (= `auth.users.id`), `role` | V2 |
 
@@ -190,3 +192,4 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | Options d'accessibilité dès la V1 (démo), dans la table `options` avec une catégorie | Besoin demandé pour la V1 ; réutiliser la table et le calcul existants plutôt que créer un mécanisme à part | Une colonne `category` et une section d'affichage de plus |
 | 29/10/2026 | Agent conversationnel (texte ou voix) en V3 | Améliore l'aide au devis, mais dépend d'un parcours et d'un catalogue stables | L'agent s'appuie sur le catalogue en base et sur la fonction de calcul unique |
 | 29/10/2026 | Options à 0 € affichées comme incluses, sans case à cocher | Cocher une prestation gratuite et incluse n'a pas de sens pour le client | Ces options n'apparaissent pas dans le calcul du devis |
+| 29/10/2026 | Transferts non cumulables, via une colonne `exclusive_group` | Un client prend soit le transfert classique, soit le véhicule adapté | Cocher l'un décoche l'autre ; la règle est réutilisable pour d'autres options |

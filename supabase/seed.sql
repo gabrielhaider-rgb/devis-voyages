@@ -1,5 +1,5 @@
 -- Devis voyages : catalogue de démonstration
--- À exécuter après 001_catalogue.sql : SQL Editor > New query > coller > Run.
+-- À exécuter après les migrations (001 à 003) : SQL Editor > New query > coller > Run.
 -- Peut être relancé : il vide d'abord le catalogue (départs et options compris).
 -- Les prix sont en centimes : 65000 = 650 €.
 
@@ -88,3 +88,15 @@ from (values
   ('japon-12-jours',    'Accompagnement par un guide formé',   40000, 'fixed',      'accessibility')
 ) as v (slug, label, price_cents, pricing_type, category)
 join public.trips t on t.slug = v.slug;
+
+-- ---------------------------------------------------------------------------
+-- Options non cumulables (voir migrations 002 et 003)
+-- ---------------------------------------------------------------------------
+
+update public.options
+set exclusive_group = 'transfert'
+where label in ('Transfert aéroport', 'Transfert en véhicule adapté');
+
+update public.options
+set exclusive_group = 'transport'
+where label in ('Location d''un 4x4', 'Véhicule adapté avec chauffeur');

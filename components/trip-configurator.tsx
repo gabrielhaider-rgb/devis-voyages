@@ -35,8 +35,15 @@ export function TripConfigurator({ trip }: { trip: Trip }) {
   });
   if (selectedIds.length > 0) quoteParams.set("options", selectedIds.join(","));
 
-  function toggleOption(id: string) {
-    setSelectedIds((ids) => (ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]));
+  // Cocher une option décoche celles de son groupe non cumulable (ex. les deux transferts).
+  function toggleOption(option: TripOption) {
+    setSelectedIds((ids) => {
+      if (ids.includes(option.id)) return ids.filter((i) => i !== option.id);
+      const conflicting = trip.options
+        .filter((o) => option.exclusiveGroup && o.exclusiveGroup === option.exclusiveGroup)
+        .map((o) => o.id);
+      return [...ids.filter((i) => !conflicting.includes(i)), option.id];
+    });
   }
 
   return (
@@ -90,6 +97,7 @@ export function TripConfigurator({ trip }: { trip: Trip }) {
         <OptionGroup
           title="Options"
           options={standardOptions}
+          allOptions={trip.options}
           selectedIds={selectedIds}
           onToggle={toggleOption}
         />
@@ -98,6 +106,7 @@ export function TripConfigurator({ trip }: { trip: Trip }) {
           title="Accessibilité"
           description="Prestations pour les voyageurs en situation de handicap."
           options={accessibilityOptions}
+          allOptions={trip.options}
           selectedIds={selectedIds}
           onToggle={toggleOption}
         />
@@ -140,14 +149,16 @@ function OptionGroup({
   title,
   description,
   options,
+  allOptions,
   selectedIds,
   onToggle,
 }: {
   title: string;
   description?: string;
   options: TripOption[];
+  allOptions: TripOption[];
   selectedIds: string[];
-  onToggle: (id: string) => void;
+  onToggle: (option: TripOption) => void;
 }) {
   if (options.length === 0) return null;
 
@@ -169,10 +180,13 @@ function OptionGroup({
               <input
                 type="checkbox"
                 checked={selectedIds.includes(option.id)}
-                onChange={() => onToggle(option.id)}
+                onChange={() => onToggle(option)}
                 className="accent-sky-600"
               />
-              {option.label}
+              <span>
+                {option.label}
+                <NotCumulativeWith option={option} allOptions={allOptions} />
+              </span>
             </span>
             <span className="text-sm text-foreground/70 whitespace-nowrap">
               {option.pricingType === "per_person"
@@ -196,5 +210,24 @@ function OptionGroup({
         </div>
       )}
     </fieldset>
+  );
+}
+
+function NotCumulativeWith({
+  option,
+  allOptions,
+}: {
+  option: TripOption;
+  allOptions: TripOption[];
+}) {
+  const others = allOptions.filter(
+    (o) => o.id !== option.id && option.exclusiveGroup && o.exclusiveGroup === option.exclusiveGroup,
+  );
+  if (others.length === 0) return null;
+
+  return (
+    <span className="block text-xs text-foreground/60">
+      Non cumulable avec : {others.map((o) => o.label).join(", ")}
+    </span>
   );
 }

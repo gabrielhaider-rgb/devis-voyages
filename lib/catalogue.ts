@@ -22,6 +22,8 @@ export type TripOption = {
   priceCents: number;
   pricingType: PricingType;
   category: "standard" | "accessibility";
+  // Les options d'un même groupe ne se cumulent pas (null = cumulable).
+  exclusiveGroup: string | null;
 };
 
 export type Trip = {
@@ -75,7 +77,7 @@ export async function getTrip(slug: string): Promise<Trip | null> {
   const { data, error } = await createCatalogueClient()
     .from("trips")
     .select(
-      "slug, title, destination, duration_days, description, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category)",
+      "slug, title, destination, duration_days, description, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category, exclusive_group)",
     )
     .eq("slug", slug)
     .order("departure_date", { referencedTable: "departures" })
@@ -102,6 +104,7 @@ export async function getTrip(slug: string): Promise<Trip | null> {
       priceCents: o.price_cents,
       pricingType: o.pricing_type,
       category: o.category,
+      exclusiveGroup: o.exclusive_group,
     })),
   };
 }
