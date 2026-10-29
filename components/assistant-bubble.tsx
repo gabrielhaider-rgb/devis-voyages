@@ -10,10 +10,14 @@ import { formatPrice, formatShortDate } from "@/lib/price";
 
 type Entry = ChatMessage & { proposal?: Proposal | null };
 
+// Pages où la bulle n'a pas sa place : administration et pages de compte
+// (connexion, inscription, mot de passe, profil), pour ne pas gêner les formulaires.
+const HIDDEN_ON = ["/admin", "/connexion", "/inscription", "/mot-de-passe-oublie", "/nouveau-mot-de-passe", "/mon-profil"];
+
 const GREETING =
   "Bonjour ! Je peux vous aider à choisir un voyage et à préparer votre devis. Où aimeriez-vous partir, et à combien ?";
 
-// Bulle de discussion avec l'assistant, présente sur toutes les pages (sauf l'administration).
+// Bulle de discussion avec l'assistant, présente sur les pages du parcours de voyage.
 export function AssistantBubble() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -32,7 +36,7 @@ export function AssistantBubble() {
     if (open) inputRef.current?.focus();
   }, [open]);
 
-  if (pathname.startsWith("/admin")) return null;
+  if (HIDDEN_ON.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return null;
 
   async function send(event?: FormEvent) {
     event?.preventDefault();

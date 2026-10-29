@@ -83,7 +83,7 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 
 ### V3 — Assistant conversationnel (texte)
 
-- **Une bulle « Besoin d'aide ? »** en bas à droite de toutes les pages (sauf l'administration et l'impression), ouverte à tous, sans compte.
+- **Une bulle « Besoin d'aide ? »** en bas à droite des pages du parcours (accueil, voyages, devis, Mes devis), ouverte à tous, sans compte. Elle est masquée dans l'administration, sur les pages de compte (connexion, inscription, mot de passe, profil) et à l'impression.
 - Le visiteur décrit son projet (« 2 adultes, Lisbonne en mai, avec un transfert adapté ») et l'assistant :
   - cherche dans le catalogue les voyages et départs qui correspondent ;
   - pose les questions manquantes (date, nombre de voyageurs, options, besoins d'accessibilité) ;
