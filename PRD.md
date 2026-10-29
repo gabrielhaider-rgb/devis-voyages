@@ -81,7 +81,7 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 - À la connexion, un admin arrive sur `/admin` ; un client arrive sur « Mes devis » s'il a déjà des devis, sinon sur l'accueil (comme après une inscription) ; sauf s'il venait d'une page précise, comme un devis à enregistrer. Un badge « Administrateur » s'affiche dans le bandeau, et la page d'administration rappelle que les modifications s'appliquent immédiatement au site public.
 - Hors périmètre de la V2 : voir les devis des clients, supprimer définitivement un voyage, photos, ordre d'affichage.
 
-### V3 — Assistant conversationnel (texte)
+### V3 — Assistant conversationnel (texte et voix)
 
 - **Une bulle « Besoin d'aide ? »** en bas à droite des pages du parcours (accueil, voyages, devis, Mes devis), ouverte à tous, sans compte. Elle est masquée dans l'administration, sur les pages de compte (connexion, inscription, mot de passe, profil) et à l'impression.
 - Le visiteur l'ouvre aussi par le bouton « Me faire conseiller » de l'accueil. Il décrit son projet (« 2 adultes, Lisbonne en mai, avec un transfert adapté ») et l'assistant :
@@ -98,8 +98,13 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
   2. règle de limitation de débit Vercel sur `/api/assistant` : 10 requêtes par minute et par adresse IP, bloquées avant d'atteindre le code ;
   3. plafonds enregistrés dans Supabase (migration 006) : 20 messages par heure et 50 par jour par adresse IP (stockée sous forme d'empreinte, jamais en clair) ; 300 par heure et 1 000 par jour pour tout le site ; au-delà, l'assistant répond qu'il est indisponible sans appeler Claude. S'y ajoutent 20 messages par conversation et 1 000 caractères par message ;
   4. limite de dépense mensuelle dans la console Anthropic, dernier filet.
-- Hors périmètre de cette étape : la voix (étape suivante), l'historique des conversations, l'enregistrement du devis par l'assistant.
-- **Étape suivante (voix)** : reconnaissance et synthèse vocales du navigateur (Web Speech API), le texte restant le mode principal.
+- **Voix** (dans la bulle, entièrement dans le navigateur, sans coût ni service supplémentaire côté site) :
+  - **dictée** : un bouton micro transcrit la phrase du visiteur (reconnaissance vocale du navigateur, en français) et l'envoie ; le texte s'affiche pendant qu'il parle ;
+  - **lecture à voix haute** : la réponse à un message dicté est lue avec une voix française du système ; un message tapé n'est jamais lu ;
+  - un bouton coupe ou réactive la lecture, et « Arrêter la lecture » interrompt une réponse en cours ; fermer la bulle coupe micro et voix ;
+  - le micro n'apparaît que si le navigateur sait dicter (Chrome, Edge, Safari ; pas Firefox) ; une mention indique que, sur Chrome, la dictée passe par les serveurs de Google ;
+  - messages clairs si le micro est bloqué, absent, ou si rien n'a été entendu.
+- Hors périmètre : l'historique des conversations, l'enregistrement du devis par l'assistant, une voix de synthèse premium (service payant).
 
 ### V4 — Suivi des devis et des clients (administration)
 
@@ -216,7 +221,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 
 - **V1.1** : compte client et historique des devis.
 - **V2** : rôles, interface admin du catalogue, archivage des voyages, gestion des admins.
-- **V3** : assistant conversationnel en texte (bulle sur toutes les pages, Claude Haiku 5.5, protections anti-abus), puis la voix.
+- **V3** : assistant conversationnel (bulle, Claude Haiku 5.5, protections anti-abus), en texte et à la voix (dictée et lecture par le navigateur).
 - **V4** : profil enrichi (nom, prénom, téléphone), dashboard et liste des devis, liste des clients et des admins. Elle ne dépend pas de la V3 et peut être construite avant.
 
 ## 10. Risques et décisions
@@ -256,6 +261,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V3 : assistant ouvert à tous, sans compte | Aucune friction pour le visiteur | Protections anti-abus en quatre couches, dont un plafond quotidien pour tout le site |
 | 29/10/2026 | V3 : Claude Haiku 5.5 plutôt qu'un modèle plus grand ou un modèle ouvert | Coût très bas (environ un centime par conversation), fiable avec les outils, même architecture que le site | Réponses moins fines sur les demandes complexes ; modèle ouvert écarté (hébergement trop lourd) |
 | 29/10/2026 | V3 : texte d'abord, la voix ensuite | Livrer un assistant fiable avant d'ajouter la voix | La voix fera l'objet d'une étape suivante |
+| 29/10/2026 | Voix par la Web Speech API du navigateur | Gratuit, sans service ni clé supplémentaires ; l'agent reste en texte | Dictée absente sur Firefox ; qualité de voix variable selon le système ; réponse lue seulement après une dictée |
 | 29/10/2026 | V3 : bulle de discussion sur toutes les pages | Aide visible partout dans le parcours | Masquée dans l'administration et à l'impression |
 | 29/10/2026 | Design « Carnet de voyage » (piste A) sur tout le site | Donner envie de voyager : tons sable et terre cuite, titres Fraunces, photos | Site toujours clair (pas de mode sombre) ; contrastes vérifiés (texte ≥ 4,5:1) ; PDF sur fond blanc |
 | 29/10/2026 | Photos des voyages par adresse saisie dans l'admin | Simple, sans stockage de fichiers | Une page Unsplash est convertie en adresse d'image à l'enregistrement ; une adresse qui n'affiche pas d'image est refusée ; un aplat de couleur s'affiche sans photo |
