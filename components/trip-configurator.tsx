@@ -151,12 +151,16 @@ function OptionGroup({
 }) {
   if (options.length === 0) return null;
 
+  // Une option à 0 € est incluse dans le voyage : on l'affiche, sans case à cocher.
+  const paidOptions = options.filter((o) => o.priceCents > 0);
+  const includedOptions = options.filter((o) => o.priceCents === 0);
+
   return (
     <fieldset>
       <legend className="mb-1 text-lg font-semibold">{title}</legend>
       {description && <p className="mb-3 text-sm text-foreground/70">{description}</p>}
       <div className="mt-2 flex flex-col gap-2">
-        {options.map((option) => (
+        {paidOptions.map((option) => (
           <label
             key={option.id}
             className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-foreground/15 p-3 has-checked:border-sky-600 has-checked:bg-sky-600/5"
@@ -171,15 +175,26 @@ function OptionGroup({
               {option.label}
             </span>
             <span className="text-sm text-foreground/70 whitespace-nowrap">
-              {option.priceCents === 0
-                ? "Inclus"
-                : option.pricingType === "per_person"
-                  ? `${formatPrice(option.priceCents)} / pers.`
-                  : formatPrice(option.priceCents)}
+              {option.pricingType === "per_person"
+                ? `${formatPrice(option.priceCents)} / pers.`
+                : formatPrice(option.priceCents)}
             </span>
           </label>
         ))}
       </div>
+      {includedOptions.length > 0 && (
+        <div className="mt-4">
+          <p className="mb-2 text-sm font-medium">Inclus dans le voyage, sans supplément :</p>
+          <ul className="flex flex-col gap-1 text-sm text-foreground/80">
+            {includedOptions.map((option) => (
+              <li key={option.id} className="flex items-center gap-2">
+                <span aria-hidden="true" className="text-sky-600">✓</span>
+                {option.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </fieldset>
   );
 }

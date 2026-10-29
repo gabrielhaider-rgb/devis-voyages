@@ -50,7 +50,7 @@ Parcours **sans compte** :
 - assistance à l'aéroport ;
 - accompagnement par un guide formé.
 
-Une option d'accessibilité peut avoir un prix de 0 € (prestation offerte) : elle apparaît alors sur le devis avec la mention « inclus ».
+Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **incluse dans le voyage**. Elle s'affiche dans une liste « Inclus dans le voyage, sans supplément », sans case à cocher, et n'entre pas dans le calcul du devis.
 
 > Pour la démo, la configuration passe de la page voyage à la page devis par l'URL (paramètres de requête). Rien n'est enregistré en base.
 
@@ -95,14 +95,14 @@ total = prix_par_personne(départ choisi) × voyageurs
 
 Voyage « Lisbonne, 5 jours ». Départs : 12/05/2027 à 650 € par personne, 14/07/2027 à 820 € par personne.
 Options : assurance annulation (40 € par personne), transfert aéroport (60 €, fixe), excursion Sintra (35 € par personne).
-Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assistance à l'aéroport (0 €, par personne).
+Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assistance à l'aéroport (0 €, incluse : non sélectionnable).
 
 | # | Configuration | Calcul | Total attendu |
 |---|---|---|---|
 | 1 | 12/05, 1 voyageur, aucune option | 650 × 1 | **650 €** |
 | 2 | 12/05, 2 voyageurs, assurance + transfert | 650 × 2 + 40 × 2 + 60 | **1 440 €** |
 | 3 | 14/07, 4 voyageurs, assurance + transfert + Sintra | 820 × 4 + 40 × 4 + 60 + 35 × 4 | **3 640 €** |
-| 4 | 12/05, 2 voyageurs, assurance + véhicule adapté + assistance aéroport | 650 × 2 + 40 × 2 + 80 + 0 × 2 | **1 460 €** |
+| 4 | 12/05, 2 voyageurs, assurance + véhicule adapté | 650 × 2 + 40 × 2 + 80 | **1 460 €** |
 
 ## 5. Modèle de données (aperçu)
 
@@ -189,3 +189,4 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | Rôle admin dans `profiles.role`, vérifié par RLS | Sécurité en base, plusieurs admins possibles | Une table et des politiques de plus en V2 |
 | 29/10/2026 | Options d'accessibilité dès la V1 (démo), dans la table `options` avec une catégorie | Besoin demandé pour la V1 ; réutiliser la table et le calcul existants plutôt que créer un mécanisme à part | Une colonne `category` et une section d'affichage de plus |
 | 29/10/2026 | Agent conversationnel (texte ou voix) en V3 | Améliore l'aide au devis, mais dépend d'un parcours et d'un catalogue stables | L'agent s'appuie sur le catalogue en base et sur la fonction de calcul unique |
+| 29/10/2026 | Options à 0 € affichées comme incluses, sans case à cocher | Cocher une prestation gratuite et incluse n'a pas de sens pour le client | Ces options n'apparaissent pas dans le calcul du devis |

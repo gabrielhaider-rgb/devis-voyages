@@ -53,9 +53,7 @@ export function computeQuote({
       amountCents: pricePerPersonCents * travelers,
     },
     ...options.map((option) =>
-      option.priceCents === 0
-        ? { label: option.label, detail: "Prestation offerte", amountCents: 0 }
-        : option.pricingType === "per_person"
+      option.pricingType === "per_person"
         ? {
             label: option.label,
             detail: `${formatPrice(option.priceCents)} × ${travelersLabel}`,

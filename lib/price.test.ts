@@ -8,7 +8,6 @@ const assurance: PricedOption = { label: "Assurance annulation", priceCents: 400
 const transfert: PricedOption = { label: "Transfert aéroport", priceCents: 6000, pricingType: "fixed" };
 const sintra: PricedOption = { label: "Excursion à Sintra", priceCents: 3500, pricingType: "per_person" };
 const vehiculeAdapte: PricedOption = { label: "Transfert en véhicule adapté", priceCents: 8000, pricingType: "fixed" };
-const assistanceAeroport: PricedOption = { label: "Assistance à l'aéroport", priceCents: 0, pricingType: "per_person" };
 
 describe("computeQuote — cas de test du PRD", () => {
   it("cas 1 : 12/05, 1 voyageur, aucune option → 650 €", () => {
@@ -30,11 +29,11 @@ describe("computeQuote — cas de test du PRD", () => {
     expect(quote.totalCents).toBe(364000);
   });
 
-  it("cas 4 : 12/05, 2 voyageurs, assurance + véhicule adapté + assistance → 1 460 €", () => {
+  it("cas 4 : 12/05, 2 voyageurs, assurance + véhicule adapté → 1 460 €", () => {
     const quote = computeQuote({
       pricePerPersonCents: depart12Mai,
       travelers: 2,
-      options: [assurance, vehiculeAdapte, assistanceAeroport],
+      options: [assurance, vehiculeAdapte],
     });
     expect(quote.totalCents).toBe(146000);
   });
