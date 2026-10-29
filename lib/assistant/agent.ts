@@ -130,7 +130,11 @@ export type ChatMessage = { role: "user" | "assistant"; content: string };
 // Une réponse de l'agent au dernier message du visiteur, avec la dernière
 // configuration chiffrée pendant ce tour (pour afficher le bouton « Voir et ajuster »).
 export async function answer(history: ChatMessage[]): Promise<{ reply: string; proposal: Proposal | null }> {
-  const client = new Anthropic();
+  // Clé explicite : on n'utilise jamais un autre identifiant présent sur la machine
+  // (par exemple un compte de société), seulement celle prévue pour ce projet.
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error("ANTHROPIC_API_KEY manquante");
+  const client = new Anthropic({ apiKey });
   const messages: Anthropic.MessageParam[] = history.map((m) => ({ role: m.role, content: m.content }));
   let proposal: Proposal | null = null;
 
