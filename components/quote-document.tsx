@@ -50,7 +50,7 @@ export function QuoteDocument(quote: QuoteDocumentProps) {
         )}
         <span className="text-foreground/70">Voyage</span>
         <span className="font-medium">
-          {quote.tripTitle} — {quote.destination}
+          {tripLabel(quote.tripTitle, quote.destination)}
         </span>
         <span className="text-foreground/70">Départ</span>
         <span className="first-letter:uppercase">{formatDate(quote.departureDate)}</span>
@@ -104,6 +104,13 @@ export function QuoteDocument(quote: QuoteDocumentProps) {
       </p>
     </article>
   );
+}
+
+// « Lisbonne, 5 jours — Portugal », mais « Japon, 12 jours » quand le titre
+// contient déjà la destination (pas de « — Japon » en double).
+export function tripLabel(title: string, destination: string) {
+  const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  return normalize(title).includes(normalize(destination)) ? title : `${title} — ${destination}`;
 }
 
 // Numéro d'un devis enregistré : date d'enregistrement + début de son identifiant.
