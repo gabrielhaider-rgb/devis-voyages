@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import { PrintButton } from "@/components/print-button";
 import { QuoteDocument, savedQuoteNumber } from "@/components/quote-document";
 import { getCurrentUser } from "@/lib/auth";
+import { getMyProfile } from "@/lib/profile";
+import { displayName } from "@/lib/profile-validation";
 import { getMyQuote } from "@/lib/saved-quotes";
 
 export const metadata: Metadata = { title: "Mon devis — Devis voyages" };
@@ -22,8 +24,9 @@ export default function SavedQuotePage({ params }: PageProps<"/mes-devis/[id]">)
 }
 
 async function SavedQuote({ id }: { id: string }) {
-  if (!(await getCurrentUser())) redirect(`/connexion?next=/mes-devis/${encodeURIComponent(id)}`);
-  const quote = await getMyQuote(id);
+  const user = await getCurrentUser();
+  if (!user) redirect(`/connexion?next=/mes-devis/${encodeURIComponent(id)}`);
+  const [quote, profile] = await Promise.all([getMyQuote(user.id, id), getMyProfile(user.id)]);
   if (!quote) notFound();
 
   return (
@@ -45,6 +48,11 @@ async function SavedQuote({ id }: { id: string }) {
         lines={quote.lines}
         totalCents={quote.totalCents}
         includedAccessibility={quote.includedAccessibility}
+        client={
+          profile
+            ? { name: displayName(profile), email: profile.email, phone: profile.phone }
+            : undefined
+        }
       />
     </>
   );

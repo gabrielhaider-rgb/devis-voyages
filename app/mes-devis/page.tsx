@@ -23,8 +23,9 @@ export default function MyQuotesPage() {
 }
 
 async function QuoteList() {
-  if (!(await getCurrentUser())) redirect("/connexion?next=/mes-devis");
-  const quotes = await getMyQuotes();
+  const user = await getCurrentUser();
+  if (!user) redirect("/connexion?next=/mes-devis");
+  const quotes = await getMyQuotes(user.id);
 
   if (quotes.length === 0) {
     return (

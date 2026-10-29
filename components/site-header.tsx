@@ -48,6 +48,9 @@ async function UserMenu() {
       <Link href="/mes-devis" className="font-medium hover:underline">
         Mes devis
       </Link>
+      <Link href="/mon-profil" className="hover:underline">
+        Mon profil
+      </Link>
       <form action={signOut}>
         <button type="submit" className="text-foreground/70 hover:underline">
           Se déconnecter

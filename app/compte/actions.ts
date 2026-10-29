@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { parseProfileForm } from "@/lib/profile-validation";
 import { safeNext } from "@/lib/safe-next";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,6 +48,9 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
     return { error: "Les deux mots de passe ne sont pas identiques." };
   }
 
+  const profile = parseProfileForm(Object.fromEntries(formData));
+  if (!profile.ok) return { error: profile.error };
+
   const next = safeNext(formData.get("next"));
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -54,6 +58,8 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
     password,
     options: {
       emailRedirectTo: `${await siteOrigin()}/auth/callback?next=${encodeURIComponent(next)}`,
+      // Recopiés dans le profil par la base à la création du compte (migration 007).
+      data: profile.value,
     },
   });
   if (error) return { error: frenchError(error.message) };
@@ -88,6 +94,19 @@ export async function updatePassword(_: FormState, formData: FormData): Promise<
     };
   }
   redirect("/mes-devis");
+}
+
+export async function updateProfile(_: FormState, formData: FormData): Promise<FormState> {
+  const profile = parseProfileForm(Object.fromEntries(formData));
+  if (!profile.ok) return { error: profile.error };
+
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) redirect("/connexion?next=/mon-profil");
+
+  const { error } = await supabase.from("profiles").update(profile.value).eq("id", data.claims.sub);
+  if (error) return { error: "L'enregistrement a échoué. Réessayez." };
+  return { message: "Profil enregistré." };
 }
 
 export async function signOut() {

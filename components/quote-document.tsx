@@ -11,6 +11,8 @@ export type QuoteDocumentProps = {
   lines: QuoteLine[];
   totalCents: number;
   includedAccessibility: string[];
+  // Client du devis enregistré (absent pour un devis non enregistré).
+  client?: { name: string; email: string; phone: string | null };
 };
 
 const issueDate = new Intl.DateTimeFormat("fr-FR", {
@@ -37,6 +39,15 @@ export function QuoteDocument(quote: QuoteDocumentProps) {
       </header>
 
       <section className="mt-6 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">
+        {quote.client && (
+          <>
+            <span className="text-foreground/70">Client</span>
+            <span>
+              {quote.client.name} · {quote.client.email}
+              {quote.client.phone && ` · ${quote.client.phone}`}
+            </span>
+          </>
+        )}
         <span className="text-foreground/70">Voyage</span>
         <span className="font-medium">
           {quote.tripTitle} — {quote.destination}

@@ -99,15 +99,3 @@ export async function getAdminTrip(id: string): Promise<AdminTrip | null> {
     })),
   };
 }
-
-export type Profile = { id: string; email: string; role: "client" | "admin"; createdAt: Date };
-
-export async function getProfiles(): Promise<Profile[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, email, role, created_at")
-    .order("email");
-  if (error) throw new Error(`Lecture des comptes impossible : ${error.message}`);
-  return data.map((p) => ({ id: p.id, email: p.email, role: p.role, createdAt: new Date(p.created_at) }));
-}

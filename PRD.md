@@ -117,7 +117,9 @@ Objectif : donner à l'agence une vue d'ensemble des devis enregistrés et de se
 - **Devis — vue liste** : date, numéro, client, voyage, date de départ, voyageurs, total ; du plus récent au plus ancien.
 - **Devis — vue détail** : le devis tel que le client le voit (même mise en page, imprimable), avec en plus un encadré client (nom, email, téléphone) et un lien vers sa fiche. Lecture seule.
 - **Liste des clients** : nom, email, téléphone, date d'inscription, nombre de devis et montant total ; **recherche** par nom ou email. Un clic ouvre la **fiche client** avec la liste de ses devis.
-- **Liste des admins** : séparée de celle des clients (nom, email, admin depuis), avec les boutons « Nommer admin » et « Retirer le rôle admin » de la V2.
+- **Liste des admins** : séparée de celle des clients (nom, email, admin depuis), avec « Retirer le rôle admin » ; on nomme un admin depuis la fiche d'un client.
+- **Changement de rôle** par une fonction en base (`set_user_role`) qui vérifie que l'appelant est admin et refuse son propre compte : chacun peut modifier son prénom, son nom et son téléphone, jamais son rôle.
+- « Mes devis » reste limité aux devis du compte connecté, même pour un admin (qui peut lire tous les devis dans l'administration).
 - Hors périmètre de la V4 : modifier ou supprimer un devis, statut de suivi commercial (« à rappeler », « réservé »…), export CSV, envoi d'emails, filtres de dates avancés.
 
 ## 4. Règles de calcul du prix
@@ -156,7 +158,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | `profiles` | `id` (= `auth.users.id`), `email`, `role` (`client` ou `admin`), `created_at` | V2 |
 | `trips.archived_at` | date d'archivage (`null` = en ligne) | V2 |
 | `assistant_usage` | compteurs de messages de l'assistant par empreinte d'IP et pour tout le site, par heure et par jour | V3 |
-| `profiles` (ajouts) | `first_name`, `last_name`, `phone` (facultatif) | V4 |
+| `profiles` (ajouts) | `first_name`, `last_name`, `phone` (facultatif), `admin_since` | V4 |
 | `quotes` (ajout) | `has_accessibility` : au moins une option d'accessibilité payante (calculé à l'enregistrement) | V4 |
 
 **RLS** :

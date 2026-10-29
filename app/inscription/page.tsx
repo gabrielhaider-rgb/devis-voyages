@@ -29,6 +29,9 @@ async function SignUpContent({ searchParams }: { searchParams: PageProps<"/inscr
         submitLabel="Créer mon compte"
         pendingLabel="Création…"
         fields={[
+          { name: "first_name", label: "Prénom", type: "text", autoComplete: "given-name" },
+          { name: "last_name", label: "Nom", type: "text", autoComplete: "family-name" },
+          { name: "phone", label: "Téléphone (facultatif, pour que l'agence puisse vous rappeler)", type: "tel", autoComplete: "tel", optional: true },
           { name: "email", label: "Email", type: "email", autoComplete: "email" },
           { name: "password", label: "Mot de passe (6 caractères minimum)", type: "password", autoComplete: "new-password" },
           { name: "confirmation", label: "Confirmer le mot de passe", type: "password", autoComplete: "new-password" },

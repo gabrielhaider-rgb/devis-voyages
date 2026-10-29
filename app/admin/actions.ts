@@ -156,8 +156,11 @@ export async function setUserRole(formData: FormData) {
   await requireAdmin();
   const role = formData.get("role") === "admin" ? "admin" : "client";
   const supabase = await createClient();
-  // La RLS refuse de modifier son propre rôle : aucune ligne n'est alors touchée.
-  const { error } = await supabase.from("profiles").update({ role }).eq("id", String(formData.get("id")));
+  // La fonction en base vérifie le rôle de l'appelant et refuse de modifier son propre compte.
+  const { error } = await supabase.rpc("set_user_role", {
+    p_user_id: String(formData.get("id")),
+    p_role: role,
+  });
   if (error) throw new Error(frenchError(error));
   refresh();
 }

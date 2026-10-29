@@ -6,8 +6,10 @@ import type { FormState } from "@/app/compte/actions";
 type Field = {
   name: string;
   label: string;
-  type: "email" | "password";
+  type: "email" | "password" | "text" | "tel";
   autoComplete: string;
+  optional?: boolean;
+  defaultValue?: string;
 };
 
 export function AccountForm({
@@ -38,7 +40,8 @@ export function AccountForm({
             name={field.name}
             type={field.type}
             autoComplete={field.autoComplete}
-            required
+            required={!field.optional}
+            defaultValue={field.defaultValue}
             minLength={field.type === "password" ? 6 : undefined}
             className="rounded-lg border border-foreground/15 bg-background p-3"
           />

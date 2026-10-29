@@ -12,6 +12,7 @@ import {
   updateOption,
   updateTrip,
 } from "@/app/admin/actions";
+import { AdminHeader } from "@/components/admin/admin-header";
 import { ActionForm, ConfirmButton, SubmitButton } from "@/components/admin/action-form";
 import { Field, inputClass } from "@/components/admin/fields";
 import { TripFields } from "@/components/admin/trip-fields";
@@ -40,6 +41,7 @@ async function EditTrip({ id }: { id: string }) {
 
   return (
     <>
+      <AdminHeader active="catalogue" />
       <Link href="/admin" className="text-sm text-foreground/70 hover:underline">
         ← Catalogue
       </Link>

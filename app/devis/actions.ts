@@ -46,6 +46,7 @@ export async function saveQuote(formData: FormData) {
       lines: quote.lines,
       included_accessibility: trip.options.filter((o) => o.priceCents === 0).map((o) => o.label),
       total_cents: quote.totalCents,
+      has_accessibility: options.some((o) => o.category === "accessibility"),
     })
     .select("id")
     .single();

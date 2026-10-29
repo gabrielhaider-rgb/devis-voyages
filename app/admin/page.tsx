@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { AdminHeader } from "@/components/admin/admin-header";
 import { getAdminTrips, requireAdmin } from "@/lib/admin";
 
 export const metadata: Metadata = { title: "Administration — Devis voyages" };
@@ -21,19 +22,10 @@ async function TripList() {
 
   return (
     <>
-      <p
-        role="status"
-        className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200"
-      >
-        Vous êtes connecté en tant qu&apos;<strong>administrateur</strong>. Les modifications faites ici
-        s&apos;appliquent immédiatement au site public.
-      </p>
+      <AdminHeader active="catalogue" />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">Catalogue</h1>
         <div className="flex gap-3 text-sm">
-          <Link href="/admin/admins" className="rounded-lg border border-foreground/15 px-4 py-2 hover:border-foreground/30">
-            Admins
-          </Link>
           <Link href="/admin/voyages/nouveau" className="rounded-lg bg-sky-600 px-4 py-2 font-medium text-white hover:bg-sky-700">
             Nouveau voyage
           </Link>

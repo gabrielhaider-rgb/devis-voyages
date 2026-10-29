@@ -2,62 +2,59 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { setUserRole } from "@/app/admin/actions";
-import { getProfiles, requireAdmin } from "@/lib/admin";
+import { ConfirmButton } from "@/components/admin/action-form";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { requireAdmin } from "@/lib/admin";
+import { getAdmins } from "@/lib/admin-quotes";
 
 export const metadata: Metadata = { title: "Admins — Administration" };
+
+const since = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "Europe/Paris" });
 
 export default function AdminsPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-12">
       <Suspense fallback={<p className="text-foreground/70">Chargement…</p>}>
-        <ProfileList />
+        <AdminList />
       </Suspense>
     </main>
   );
 }
 
-async function ProfileList() {
+async function AdminList() {
   const me = await requireAdmin("/admin/admins");
-  const profiles = await getProfiles();
+  const admins = await getAdmins();
 
   return (
     <>
-      <Link href="/admin" className="text-sm text-foreground/70 hover:underline">
-        ← Catalogue
-      </Link>
-      <h1 className="mt-4 text-3xl font-semibold tracking-tight">Admins</h1>
+      <AdminHeader active="admins" />
+      <h1 className="text-3xl font-semibold tracking-tight">Admins</h1>
       <p className="mt-2 text-sm text-foreground/70">
-        Les admins gèrent le catalogue et nomment les autres admins. Vous ne pouvez pas retirer votre propre rôle.
+        Pour nommer un admin, ouvrez sa fiche dans l&apos;onglet{" "}
+        <Link href="/admin/clients" className="text-sky-600 hover:underline">
+          Clients
+        </Link>
+        . Vous ne pouvez pas retirer votre propre rôle.
       </p>
 
       <ul className="mt-6 flex flex-col gap-2">
-        {profiles.map((profile) => {
-          const isMe = profile.id === me.id;
-          const isAdmin = profile.role === "admin";
+        {admins.map((admin) => {
+          const isMe = admin.id === me.id;
           return (
-            <li
-              key={profile.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-foreground/15 p-3"
-            >
+            <li key={admin.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-foreground/15 p-3">
               <span className="text-sm">
-                {profile.email}
+                <span className="font-medium">{admin.name}</span>
                 {isMe && <span className="text-foreground/60"> (vous)</span>}
-                {isAdmin && (
-                  <span className="ml-2 rounded-full bg-sky-600/15 px-2 py-0.5 text-xs font-medium text-sky-700 dark:text-sky-400">
-                    Admin
-                  </span>
+                <span className="block text-foreground/70">{admin.email}</span>
+                {admin.adminSince && (
+                  <span className="block text-xs text-foreground/60">Admin depuis le {since.format(admin.adminSince)}</span>
                 )}
               </span>
               {!isMe && (
                 <form action={setUserRole}>
-                  <input type="hidden" name="id" value={profile.id} />
-                  <input type="hidden" name="role" value={isAdmin ? "client" : "admin"} />
-                  <button
-                    type="submit"
-                    className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm hover:border-foreground/40"
-                  >
-                    {isAdmin ? "Retirer le rôle admin" : "Nommer admin"}
-                  </button>
+                  <input type="hidden" name="id" value={admin.id} />
+                  <input type="hidden" name="role" value="client" />
+                  <ConfirmButton question={`Retirer le rôle admin de ${admin.name} ?`}>Retirer le rôle admin</ConfirmButton>
                 </form>
               )}
             </li>

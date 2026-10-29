@@ -45,21 +45,28 @@ function toSavedQuote(row: QuoteRow): SavedQuote {
   };
 }
 
-// La RLS ne renvoie que les devis de l'utilisateur connecté.
-export async function getMyQuotes(): Promise<SavedQuote[]> {
+// Filtre explicite sur le compte : un admin peut lire tous les devis (V4),
+// mais « Mes devis » ne doit montrer que les siens.
+export async function getMyQuotes(userId: string): Promise<SavedQuote[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("quotes")
     .select(COLUMNS)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(`Lecture des devis impossible : ${error.message}`);
   return (data as QuoteRow[]).map(toSavedQuote);
 }
 
-export async function getMyQuote(id: string): Promise<SavedQuote | null> {
+export async function getMyQuote(userId: string, id: string): Promise<SavedQuote | null> {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const supabase = await createClient();
-  const { data, error } = await supabase.from("quotes").select(COLUMNS).eq("id", id).maybeSingle();
+  const { data, error } = await supabase
+    .from("quotes")
+    .select(COLUMNS)
+    .eq("id", id)
+    .eq("user_id", userId)
+    .maybeSingle();
   if (error) throw new Error(`Lecture du devis impossible : ${error.message}`);
   return data ? toSavedQuote(data as QuoteRow) : null;
 }

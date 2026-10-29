@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { createTrip } from "@/app/admin/actions";
+import { AdminHeader } from "@/components/admin/admin-header";
 import { ActionForm, SubmitButton } from "@/components/admin/action-form";
 import { TripFields } from "@/components/admin/trip-fields";
 import { requireAdmin } from "@/lib/admin";
@@ -22,6 +23,7 @@ async function NewTrip() {
   await requireAdmin("/admin/voyages/nouveau");
   return (
     <>
+      <AdminHeader active="catalogue" />
       <Link href="/admin" className="text-sm text-foreground/70 hover:underline">
         ← Catalogue
       </Link>
