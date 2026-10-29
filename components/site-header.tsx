@@ -44,9 +44,12 @@ async function UserMenu() {
           Admin
         </Link>
       )}
-      <Link href="/mes-devis" className="font-medium hover:underline">
-        Mes devis
-      </Link>
+      {/* Un admin suit les devis dans l'administration : pas de « Mes devis » pour lui. */}
+      {!admin && (
+        <Link href="/mes-devis" className="font-medium hover:underline">
+          Mes devis
+        </Link>
+      )}
       <Link href="/mon-profil" className="hover:underline">
         Mon profil
       </Link>

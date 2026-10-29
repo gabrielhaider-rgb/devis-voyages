@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { savedQuoteNumber } from "@/components/quote-document";
+import { isAdmin } from "@/lib/admin";
 import { getCurrentUser } from "@/lib/auth";
 import { formatDate, formatPrice } from "@/lib/price";
 import { getMyQuotes } from "@/lib/saved-quotes";
@@ -25,6 +26,7 @@ export default function MyQuotesPage() {
 async function QuoteList() {
   const user = await getCurrentUser();
   if (!user) redirect("/connexion?next=/mes-devis");
+  if (await isAdmin(user)) redirect("/admin/devis");
   const quotes = await getMyQuotes(user.id);
 
   if (quotes.length === 0) {

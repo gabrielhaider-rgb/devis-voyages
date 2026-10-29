@@ -119,7 +119,7 @@ Objectif : donner à l'agence une vue d'ensemble des devis enregistrés et de se
 - **Liste des clients** : nom, email, téléphone, date d'inscription, nombre de devis et montant total ; **recherche** par nom ou email. Un clic ouvre la **fiche client** avec la liste de ses devis.
 - **Liste des admins** : séparée de celle des clients (nom, email, admin depuis), avec « Retirer le rôle admin » ; on nomme un admin depuis la fiche d'un client.
 - **Changement de rôle** par une fonction en base (`set_user_role`) qui vérifie que l'appelant est admin et refuse son propre compte : chacun peut modifier son prénom, son nom et son téléphone, jamais son rôle.
-- « Mes devis » reste limité aux devis du compte connecté, même pour un admin (qui peut lire tous les devis dans l'administration).
+- « Mes devis » reste limité aux devis du compte connecté. Un admin n'a pas de lien « Mes devis » dans le bandeau : il suit les devis dans l'administration (onglet Devis), vers laquelle `/mes-devis` le renvoie.
 - Hors périmètre de la V4 : modifier ou supprimer un devis, statut de suivi commercial (« à rappeler », « réservé »…), export CSV, envoi d'emails, filtres de dates avancés.
 
 ## 4. Règles de calcul du prix
