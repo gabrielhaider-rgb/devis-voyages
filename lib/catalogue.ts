@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { PricingType } from "@/lib/price";
 
 export type TripSummary = {
@@ -36,6 +36,9 @@ export type Trip = {
   options: TripOption[];
 };
 
+// Tag du cache du catalogue public, vidé par l'admin après chaque modification.
+export const CATALOGUE_TAG = "catalogue";
+
 // Le catalogue est public et sans session : un client sans cookies suffit,
 // ce qui permet de mettre le résultat en cache.
 function createCatalogueClient() {
@@ -48,12 +51,14 @@ function createCatalogueClient() {
 export async function getTrips(): Promise<TripSummary[]> {
   "use cache";
   cacheLife("hours");
+  cacheTag(CATALOGUE_TAG);
 
   const { data, error } = await createCatalogueClient()
     .from("trips")
     .select(
       "slug, title, destination, duration_days, departures(price_per_person_cents)",
     )
+    .is("archived_at", null)
     .order("title");
 
   if (error) throw new Error(`Lecture du catalogue impossible : ${error.message}`);
@@ -73,6 +78,7 @@ export async function getTrips(): Promise<TripSummary[]> {
 export async function getTrip(slug: string): Promise<Trip | null> {
   "use cache";
   cacheLife("hours");
+  cacheTag(CATALOGUE_TAG);
 
   const { data, error } = await createCatalogueClient()
     .from("trips")
@@ -80,6 +86,7 @@ export async function getTrip(slug: string): Promise<Trip | null> {
       "slug, title, destination, duration_days, description, departures(id, departure_date, price_per_person_cents), options(id, label, price_cents, pricing_type, category, exclusive_group)",
     )
     .eq("slug", slug)
+    .is("archived_at", null)
     .order("departure_date", { referencedTable: "departures" })
     .order("price_cents", { referencedTable: "options", ascending: false })
     .maybeSingle();

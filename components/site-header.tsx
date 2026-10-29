@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { signOut } from "@/app/compte/actions";
+import { isAdmin } from "@/lib/admin";
 import { getCurrentUser } from "@/lib/auth";
 
 export function SiteHeader() {
@@ -32,6 +33,11 @@ async function UserMenu() {
   return (
     <nav className="flex items-center gap-4 text-sm">
       <span className="hidden text-foreground/60 sm:inline">{user.email}</span>
+      {(await isAdmin(user)) && (
+        <Link href="/admin" className="font-medium hover:underline">
+          Admin
+        </Link>
+      )}
       <Link href="/mes-devis" className="font-medium hover:underline">
         Mes devis
       </Link>

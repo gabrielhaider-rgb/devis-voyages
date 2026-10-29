@@ -67,8 +67,17 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 
 ### V2
 
-- **Interface admin** : créer, modifier et archiver les voyages, leurs départs et leurs options.
-- **Rôle admin** : table `profiles` avec une colonne `role` (`client` ou `admin`), vérifiée par les politiques RLS. Plusieurs admins sont possibles, et la sécurité est appliquée en base et pas seulement dans Next.js.
+- **Rôles** : table `profiles` (un profil par compte, créé automatiquement à l'inscription) avec une colonne `role` (`client` ou `admin`), vérifiée par les politiques RLS. Plusieurs admins sont possibles, et la sécurité est appliquée en base et pas seulement dans Next.js.
+- **Premier admin** désigné une seule fois par une requête SQL ; ensuite, une page **Admins** permet à un admin de nommer d'autres admins ou de leur retirer ce rôle. Un admin ne peut jamais modifier son propre rôle (règle en base), pour ne pas se retrouver sans admin.
+- **Interface admin** (`/admin`, lien « Admin » dans le bandeau pour les admins seulement) :
+  - liste de tous les voyages, archivés compris ;
+  - création d'un voyage : il reste archivé (invisible) jusqu'à sa publication, possible dès qu'il a au moins un départ ;
+  - fiche voyage : informations, départs (ajouter, modifier, supprimer), options (libellé, prix, forfait ou par personne, option ou accessibilité, groupe non cumulable ; ajouter, modifier, supprimer), bouton « Archiver » ou « Publier sur le site ».
+  - Les prix se saisissent en euros (« 650 » ou « 650,50 ») et sont stockés en centimes.
+- **Archivage** plutôt que suppression d'un voyage (colonne `archived_at`) : un voyage archivé disparaît du site public mais reste réactivable. Supprimer un départ ou une option ne touche pas les devis déjà enregistrés (ce sont des copies).
+- **Mise à jour immédiate** : chaque modification dans l'admin vide le cache du catalogue, le site public change tout de suite.
+- Un compte non admin qui ouvre `/admin` voit une page « introuvable ».
+- Hors périmètre de la V2 : voir les devis des clients, supprimer définitivement un voyage, photos, ordre d'affichage.
 
 ### V3
 
@@ -118,13 +127,14 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | `departures` | `id`, `trip_id`, `departure_date`, `price_per_person_cents` | Démo |
 | `options` | `id`, `trip_id`, `label`, `price_cents`, `pricing_type` (`fixed` ou `per_person`), `category` (`standard` ou `accessibility`), `exclusive_group` (options non cumulables) | Démo |
 | `quotes` | `id`, `user_id`, `trip_slug`, `trip_title`, `destination`, `duration_days`, `departure_date`, `travelers`, `lines` (JSON), `included_accessibility` (JSON), `total_cents`, `created_at` — copie figée du devis | V1.1 |
-| `profiles` | `id` (= `auth.users.id`), `role` | V2 |
+| `profiles` | `id` (= `auth.users.id`), `email`, `role` (`client` ou `admin`), `created_at` | V2 |
+| `trips.archived_at` | date d'archivage (`null` = en ligne) | V2 |
 
 **RLS** :
 - Démo : lecture publique (`select` pour `anon`) sur `trips`, `departures` et `options`, et aucune écriture.
 - V1.1 : un utilisateur ne lit et ne crée que ses propres `quotes` (ni modification ni suppression).
 - Limite connue : un client qui appelle l'API Supabase directement pourrait enregistrer un devis avec un montant inventé, visible par lui seul. Le devis restant indicatif, c'est acceptable pour la V1.1 ; un enregistrement par une fonction côté base corrigerait ce point plus tard.
-- V2 : écriture sur le catalogue réservée aux `profiles.role = 'admin'`.
+- V2 : écriture sur le catalogue réservée aux admins (fonction `is_admin()`) ; voyages archivés invisibles pour les visiteurs ; un admin ne peut pas modifier son propre rôle.
 
 ## 6. Hors périmètre
 
@@ -171,7 +181,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 ### Après la démo (sans date fixée)
 
 - **V1.1** : compte client et historique des devis.
-- **V2** : rôle admin et interface de gestion du catalogue.
+- **V2** : rôles, interface admin du catalogue, archivage des voyages, gestion des admins.
 - **V3** : agent conversationnel (texte, puis voix) d'aide à la création des devis.
 
 ## 10. Risques et décisions
@@ -202,3 +212,6 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V1.1 : connexion par email et mot de passe | Approche déjà connue (Job Tracker) | Pages inscription, connexion, mot de passe oublié |
 | 29/10/2026 | V1.1 : devis enregistré en copie figée | Un devis doit garder son prix, comme un devis papier | Les lignes et le total sont stockés tels quels dans `quotes` |
 | 29/10/2026 | V1.1 : confirmation de l'email désactivée pour la démo | Éviter d'ouvrir une boîte mail pendant la démo | Moins sûr : à réactiver avant un usage réel |
+| 29/10/2026 | V2 : archiver un voyage plutôt que le supprimer | Pouvoir le réactiver ; ne rien perdre | Colonne `archived_at`, voyages archivés masqués par la RLS |
+| 29/10/2026 | V2 : page de gestion des admins | Nommer des admins sans SQL | Seul le premier admin passe par une requête SQL |
+| 29/10/2026 | V2 : l'admin ne voit pas les devis des clients | Rester sur la gestion du catalogue | Pourra venir dans une version suivante |
