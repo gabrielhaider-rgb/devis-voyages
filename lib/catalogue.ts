@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { cacheLife, cacheTag } from "next/cache";
+import { nextDeparture, todayInParis } from "@/lib/departures";
 import type { PricingType } from "@/lib/price";
 
 export type TripSummary = {
@@ -7,7 +8,8 @@ export type TripSummary = {
   title: string;
   destination: string;
   durationDays: number;
-  fromPriceCents: number | null;
+  // Prochain départ à venir (null s'il n'y en a plus).
+  nextDeparture: { date: string; pricePerPersonCents: number } | null;
 };
 
 export type Departure = {
@@ -56,23 +58,25 @@ export async function getTrips(): Promise<TripSummary[]> {
   const { data, error } = await createCatalogueClient()
     .from("trips")
     .select(
-      "slug, title, destination, duration_days, departures(price_per_person_cents)",
+      "slug, title, destination, duration_days, departures(departure_date, price_per_person_cents)",
     )
     .is("archived_at", null)
     .order("title");
 
   if (error) throw new Error(`Lecture du catalogue impossible : ${error.message}`);
 
-  return data.map((trip) => {
-    const prices = trip.departures.map((d) => d.price_per_person_cents);
-    return {
-      slug: trip.slug,
-      title: trip.title,
-      destination: trip.destination,
-      durationDays: trip.duration_days,
-      fromPriceCents: prices.length > 0 ? Math.min(...prices) : null,
-    };
-  });
+  // Le cache est rafraîchi toutes les heures : « aujourd'hui » reste à jour.
+  const today = todayInParis();
+  return data.map((trip) => ({
+    slug: trip.slug,
+    title: trip.title,
+    destination: trip.destination,
+    durationDays: trip.duration_days,
+    nextDeparture: nextDeparture(
+      trip.departures.map((d) => ({ date: d.departure_date, pricePerPersonCents: d.price_per_person_cents })),
+      today,
+    ),
+  }));
 }
 
 export async function getTrip(slug: string): Promise<Trip | null> {

@@ -85,7 +85,24 @@ const longDate = new Intl.DateTimeFormat("fr-FR", {
   timeZone: "UTC",
 });
 
+// En français, le premier jour du mois s'écrit « 1er » : "1 avril" → "1er avril".
+function firstOfMonth(text: string) {
+  return text.replace(/(^|\s)1(?= \D)/, "$11er");
+}
+
 // "2027-05-12" → "mercredi 12 mai 2027"
 export function formatDate(isoDate: string) {
-  return longDate.format(new Date(`${isoDate}T00:00:00Z`));
+  return firstOfMonth(longDate.format(new Date(`${isoDate}T00:00:00Z`)));
+}
+
+const shortDate = new Intl.DateTimeFormat("fr-FR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+// "2027-06-10" → "10 juin 2027"
+export function formatShortDate(isoDate: string) {
+  return firstOfMonth(shortDate.format(new Date(`${isoDate}T00:00:00Z`)));
 }

@@ -33,7 +33,7 @@
 
 Parcours **sans compte** :
 
-1. **Liste des voyages** : tous les voyages en cartes (image, titre, destination, durée, prix « à partir de »). Pas de filtre.
+1. **Liste des voyages** : tous les voyages en cartes (image, titre, destination, durée, date et prix par personne du prochain départ). Pas de filtre.
 2. **Page voyage** : description, puis configuration :
    - choix d'une **date de départ** parmi les départs fixes du voyage ;
    - choix du **nombre de voyageurs** (1 à 9) ;
@@ -104,7 +104,7 @@ total = prix_par_personne(départ choisi) × voyageurs
 
 - Les prix sont stockés **en centimes** (entiers) pour éviter les erreurs d'arrondi, et affichés en euros TTC.
 - Le calcul se fait dans **une seule fonction**, réutilisée par la page voyage et par la page devis.
-- Le prix « à partir de » d'un voyage est le plus bas des prix par personne de ses départs.
+- Sur l'accueil, chaque voyage affiche la date et le prix par personne de son **prochain départ** (le plus proche à partir d'aujourd'hui, heure de Paris), et non plus le prix le plus bas. Les départs passés sont ignorés ; sans départ à venir, la carte indique « Aucun départ prévu ».
 
 ### Cas de test (référence pour valider la démo)
 
@@ -215,3 +215,4 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V2 : archiver un voyage plutôt que le supprimer | Pouvoir le réactiver ; ne rien perdre | Colonne `archived_at`, voyages archivés masqués par la RLS |
 | 29/10/2026 | V2 : page de gestion des admins | Nommer des admins sans SQL | Seul le premier admin passe par une requête SQL |
 | 29/10/2026 | V2 : l'admin ne voit pas les devis des clients | Rester sur la gestion du catalogue | Pourra venir dans une version suivante |
+| 29/10/2026 | Accueil : prix du prochain départ au lieu du prix « à partir de » | Une hausse de prix sur le prochain départ restait invisible (ex. Islande à 2 000 € affichée 1 890 €) | La carte montre la date et le prix du départ le plus proche |

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeQuote, formatPrice, type PricedOption } from "./price";
+import { computeQuote, formatDate, formatPrice, formatShortDate, type PricedOption } from "./price";
 
 // Cas de test du PRD (section 4) : voyage « Lisbonne, 5 jours ».
 const depart12Mai = 65000;
@@ -50,5 +50,15 @@ describe("formatPrice", () => {
   it("formate les centimes en euros", () => {
     expect(formatPrice(144000).replace(/\s/g, " ")).toBe("1 440 €");
     expect(formatPrice(1250).replace(/\s/g, " ")).toBe("12,50 €");
+  });
+});
+
+describe("formatDate et formatShortDate", () => {
+  it("écrivent les dates en français, avec « 1er » pour le premier du mois", () => {
+    expect(formatDate("2027-05-12")).toBe("mercredi 12 mai 2027");
+    expect(formatDate("2027-04-01")).toBe("jeudi 1er avril 2027");
+    expect(formatShortDate("2027-04-01")).toBe("1er avril 2027");
+    expect(formatShortDate("2027-06-10")).toBe("10 juin 2027");
+    expect(formatShortDate("2027-11-21")).toBe("21 novembre 2027");
   });
 });

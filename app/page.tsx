@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTrips, type TripSummary } from "@/lib/catalogue";
-import { formatPrice } from "@/lib/price";
+import { formatPrice, formatShortDate } from "@/lib/price";
 
 export default async function Home() {
   const trips = await getTrips();
@@ -46,19 +46,23 @@ function TripCard({ trip }: { trip: TripSummary }) {
       <div className="flex flex-1 flex-col gap-1 p-4">
         <h2 className="text-lg font-semibold group-hover:underline">{trip.title}</h2>
         <p className="text-sm text-foreground/70">{trip.durationDays} jours</p>
-        <p className="mt-auto pt-3 text-sm">
-          {trip.fromPriceCents === null ? (
+        <div className="mt-auto pt-3 text-sm">
+          {trip.nextDeparture === null ? (
             "Aucun départ prévu"
           ) : (
             <>
-              À partir de{" "}
-              <span className="text-base font-semibold">
-                {formatPrice(trip.fromPriceCents)}
-              </span>{" "}
-              / personne
+              <p className="text-foreground/70">
+                Prochain départ : {formatShortDate(trip.nextDeparture.date)}
+              </p>
+              <p>
+                <span className="text-base font-semibold">
+                  {formatPrice(trip.nextDeparture.pricePerPersonCents)}
+                </span>{" "}
+                / personne
+              </p>
             </>
           )}
-        </p>
+        </div>
       </div>
     </Link>
   );
