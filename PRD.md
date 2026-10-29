@@ -78,7 +78,7 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 - **Archivage** plutôt que suppression d'un voyage (colonne `archived_at`) : un voyage archivé disparaît du site public mais reste réactivable. Supprimer un départ ou une option ne touche pas les devis déjà enregistrés (ce sont des copies).
 - **Mise à jour immédiate** : chaque modification dans l'admin vide le cache du catalogue, le site public change tout de suite.
 - Un compte non admin qui ouvre `/admin` voit une page « introuvable ».
-- À la connexion, un admin arrive sur `/admin` (un client sur « Mes devis »), sauf s'il venait d'une page précise, comme un devis à enregistrer. Un badge « Administrateur » s'affiche dans le bandeau, et la page d'administration rappelle que les modifications s'appliquent immédiatement au site public.
+- À la connexion, un admin arrive sur `/admin` ; un client arrive sur « Mes devis » s'il a déjà des devis, sinon sur l'accueil (comme après une inscription) ; sauf s'il venait d'une page précise, comme un devis à enregistrer. Un badge « Administrateur » s'affiche dans le bandeau, et la page d'administration rappelle que les modifications s'appliquent immédiatement au site public.
 - Hors périmètre de la V2 : voir les devis des clients, supprimer définitivement un voyage, photos, ordre d'affichage.
 
 ### V3 — Assistant conversationnel (texte)

@@ -19,7 +19,9 @@ export default function SignUpPage({ searchParams }: PageProps<"/inscription">) 
 }
 
 async function SignUpContent({ searchParams }: { searchParams: PageProps<"/inscription">["searchParams"] }) {
-  const next = safeNext((await searchParams).next);
+  const requested = (await searchParams).next;
+  // Sans page demandée, le nouveau compte arrive sur l'accueil (voir signUp).
+  const next = requested ? safeNext(requested) : undefined;
 
   return (
     <>
@@ -39,7 +41,7 @@ async function SignUpContent({ searchParams }: { searchParams: PageProps<"/inscr
       />
       <p className="mt-4 text-sm">
         Déjà un compte ?{" "}
-        <Link href={`/connexion?next=${encodeURIComponent(next)}`} className="text-sky-600 hover:underline">
+        <Link href={next ? `/connexion?next=${encodeURIComponent(next)}` : "/connexion"} className="text-sky-600 hover:underline">
           Se connecter
         </Link>
       </p>

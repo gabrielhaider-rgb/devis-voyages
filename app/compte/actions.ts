@@ -36,10 +36,16 @@ export async function signIn(_: FormState, formData: FormData): Promise<FormStat
   if (error) return { error: frenchError(error.message) };
 
   // Une page demandée (ex. le devis à enregistrer) passe en premier ; sinon,
-  // l'admin arrive sur l'administration et le client sur ses devis.
+  // l'admin arrive sur l'administration, le client sur ses devis s'il en a,
+  // et sur l'accueil s'il n'en a pas encore.
   if (formData.get("next")) redirect(safeNext(formData.get("next")));
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-  redirect(profile?.role === "admin" ? "/admin" : "/mes-devis");
+  if (profile?.role === "admin") redirect("/admin");
+  const { count } = await supabase
+    .from("quotes")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", data.user.id);
+  redirect(count ? "/mes-devis" : "/");
 }
 
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {
@@ -51,7 +57,8 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
   const profile = parseProfileForm(Object.fromEntries(formData));
   if (!profile.ok) return { error: profile.error };
 
-  const next = safeNext(formData.get("next"));
+  // Sans page demandée, un nouveau compte (qui n'a encore aucun devis) arrive sur l'accueil.
+  const next = formData.get("next") ? safeNext(formData.get("next")) : "/";
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: String(formData.get("email") ?? ""),
