@@ -26,6 +26,7 @@
 |---|---|---|
 | **Client (visiteur)** | Trouver un voyage, le configurer, connaître le prix total et garder un devis | Démo, V1.1 |
 | **Administrateur de l'agence** | Ajouter et modifier les voyages, départs et options sans toucher au code | V2 |
+| **Administrateur de l'agence** | Suivre les devis enregistrés et retrouver les clients pour les recontacter | V4 |
 
 ## 3. Fonctionnalités et priorités
 
@@ -95,6 +96,25 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
   - la lecture du catalogue et le remplissage de la configuration sont exposés à l'agent sous forme d'outils ;
   - pour la voix : reconnaissance et synthèse vocales du navigateur (Web Speech API) en première approche, le texte restant le mode principal.
 
+### V4 — Suivi des devis et des clients (administration)
+
+Objectif : donner à l'agence une vue d'ensemble des devis enregistrés et de ses clients, pour pouvoir les recontacter.
+
+- **Profil enrichi** pour tous les comptes : **prénom** et **nom** (obligatoires à l'inscription), **téléphone** (facultatif, pour que l'agence puisse rappeler un client).
+  - Une page **« Mon profil »** permet de les compléter ou de les modifier. Les comptes créés avant la V4 la complètent à leur rythme ; en attendant, leur email sert de nom.
+  - Le nom, l'email et le téléphone du client apparaissent sur ses devis enregistrés (et donc sur le PDF).
+- **Navigation de l'administration** en onglets : Catalogue · Devis · Clients · Admins.
+- **Devis — vue Dashboard** :
+  - chiffres clés : nombre de devis, montant total, montant moyen ;
+  - par voyage : nombre de devis et montant total, du plus demandé au moins demandé ;
+  - par période : graphique du nombre de devis par mois (12 derniers mois) ;
+  - accessibilité : part des devis comprenant au moins une option d'accessibilité payante.
+- **Devis — vue liste** : date, numéro, client, voyage, date de départ, voyageurs, total ; du plus récent au plus ancien.
+- **Devis — vue détail** : le devis tel que le client le voit (même mise en page, imprimable), avec en plus un encadré client (nom, email, téléphone) et un lien vers sa fiche. Lecture seule.
+- **Liste des clients** : nom, email, téléphone, date d'inscription, nombre de devis et montant total ; **recherche** par nom ou email. Un clic ouvre la **fiche client** avec la liste de ses devis.
+- **Liste des admins** : séparée de celle des clients (nom, email, admin depuis), avec les boutons « Nommer admin » et « Retirer le rôle admin » de la V2.
+- Hors périmètre de la V4 : modifier ou supprimer un devis, statut de suivi commercial (« à rappeler », « réservé »…), export CSV, envoi d'emails, filtres de dates avancés.
+
 ## 4. Règles de calcul du prix
 
 ```
@@ -130,12 +150,16 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | `quotes` | `id`, `user_id`, `trip_slug`, `trip_title`, `destination`, `duration_days`, `departure_date`, `travelers`, `lines` (JSON), `included_accessibility` (JSON), `total_cents`, `created_at` — copie figée du devis | V1.1 |
 | `profiles` | `id` (= `auth.users.id`), `email`, `role` (`client` ou `admin`), `created_at` | V2 |
 | `trips.archived_at` | date d'archivage (`null` = en ligne) | V2 |
+| `profiles` (ajouts) | `first_name`, `last_name`, `phone` (facultatif) | V4 |
+| `quotes` (ajout) | `has_accessibility` : au moins une option d'accessibilité payante (calculé à l'enregistrement) | V4 |
 
 **RLS** :
 - Démo : lecture publique (`select` pour `anon`) sur `trips`, `departures` et `options`, et aucune écriture.
 - V1.1 : un utilisateur ne lit et ne crée que ses propres `quotes` (ni modification ni suppression).
 - Limite connue : un client qui appelle l'API Supabase directement pourrait enregistrer un devis avec un montant inventé, visible par lui seul. Le devis restant indicatif, c'est acceptable pour la V1.1 ; un enregistrement par une fonction côté base corrigerait ce point plus tard.
 - V2 : écriture sur le catalogue réservée aux admins (fonction `is_admin()`) ; voyages archivés invisibles pour les visiteurs ; un admin ne peut pas modifier son propre rôle.
+- V4 : les admins lisent tous les devis (lecture seule) ; chaque utilisateur peut modifier son prénom, son nom et son téléphone, mais jamais son rôle.
+- Limite connue (V4) : les devis enregistrés avant la V4 ne savent pas s'ils contenaient une option d'accessibilité payante ; ils sont comptés « sans » dans le dashboard.
 
 ## 6. Hors périmètre
 
@@ -148,6 +172,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 - Multilingue et multidevise.
 - Interface admin avant la V2.
 - Agent conversationnel (texte ou voix) avant la V3.
+- Suivi commercial des devis (statuts, relances) et export, y compris en V4.
 
 ## 7. Contraintes techniques
 
@@ -184,6 +209,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 - **V1.1** : compte client et historique des devis.
 - **V2** : rôles, interface admin du catalogue, archivage des voyages, gestion des admins.
 - **V3** : agent conversationnel (texte, puis voix) d'aide à la création des devis.
+- **V4** : profil enrichi (nom, prénom, téléphone), dashboard et liste des devis, liste des clients et des admins. Elle ne dépend pas de la V3 et peut être construite avant.
 
 ## 10. Risques et décisions
 
@@ -217,3 +243,5 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V2 : page de gestion des admins | Nommer des admins sans SQL | Seul le premier admin passe par une requête SQL |
 | 29/10/2026 | V2 : l'admin ne voit pas les devis des clients | Rester sur la gestion du catalogue | Pourra venir dans une version suivante |
 | 29/10/2026 | Accueil : prix du prochain départ au lieu du prix « à partir de » | Une hausse de prix sur le prochain départ restait invisible (ex. Islande à 2 000 € affichée 1 890 €) | La carte montre la date et le prix du départ le plus proche |
+| 29/10/2026 | V4 : suivi des devis et des clients dans l'administration | Permettre à l'agence de recontacter les clients et de voir quels voyages intéressent | Profil enrichi, lecture de tous les devis par les admins (RLS) |
+| 29/10/2026 | V4 : prénom et nom obligatoires, téléphone facultatif | Identifier le client sans imposer un numéro | Inscription modifiée ; page « Mon profil » pour les comptes existants |
