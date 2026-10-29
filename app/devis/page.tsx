@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { saveQuote } from "@/app/devis/actions";
 import { PrintButton } from "@/components/print-button";
+import { QuoteDocument } from "@/components/quote-document";
 import { getTrip } from "@/lib/catalogue";
-import { computeQuote, formatDate, formatPrice } from "@/lib/price";
+import { computeQuote } from "@/lib/price";
 import { resolveQuoteRequest } from "@/lib/quote-request";
 
 export const metadata: Metadata = { title: "Votre devis — Devis voyages" };
@@ -51,7 +53,6 @@ async function QuoteContent({
     travelers,
     options,
   });
-  const includedOptions = trip.options.filter((o) => o.priceCents === 0);
   const now = new Date();
 
   return (
@@ -60,93 +61,41 @@ async function QuoteContent({
         <Link href={`/voyages/${trip.slug}`} className="text-sm text-foreground/70 hover:underline">
           ← Modifier ma configuration
         </Link>
-        <PrintButton />
+        <div className="flex flex-wrap gap-3">
+          <form action={saveQuote}>
+            <input type="hidden" name="voyage" value={trip.slug} />
+            <input type="hidden" name="depart" value={departure.id} />
+            <input type="hidden" name="voyageurs" value={travelers} />
+            <input type="hidden" name="options" value={options.map((o) => o.id).join(",")} />
+            <button
+              type="submit"
+              className="rounded-lg border border-sky-600 px-4 py-2 font-medium text-sky-700 hover:bg-sky-600/10 dark:text-sky-400"
+            >
+              Enregistrer ce devis
+            </button>
+          </form>
+          <PrintButton />
+        </div>
       </div>
 
-      <article className="rounded-xl border border-foreground/15 p-6 sm:p-8 print:rounded-none print:border-0 print:p-0">
-        <header className="flex flex-wrap items-start justify-between gap-4 border-b border-foreground/15 pb-6">
-          <div>
-            <p className="text-lg font-semibold text-sky-600">Devis voyages</p>
-            <p className="text-sm text-foreground/70">Tour-opérateur</p>
-          </div>
-          <div className="text-sm sm:text-right">
-            <h1 className="text-2xl font-semibold">Devis</h1>
-            <p>N° {quoteNumber(now, params)}</p>
-            <p className="text-foreground/70">Établi le {formatToday(now)}</p>
-          </div>
-        </header>
-
-        <section className="mt-6 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">
-          <span className="text-foreground/70">Voyage</span>
-          <span className="font-medium">
-            {trip.title} — {trip.destination}
-          </span>
-          <span className="text-foreground/70">Départ</span>
-          <span className="first-letter:uppercase">{formatDate(departure.date)}</span>
-          <span className="text-foreground/70">Durée</span>
-          <span>{trip.durationDays} jours</span>
-          <span className="text-foreground/70">Voyageurs</span>
-          <span>{travelers}</span>
-        </section>
-
-        <table className="mt-8 w-full text-sm">
-          <thead>
-            <tr className="border-b border-foreground/15 text-left text-foreground/70">
-              <th className="pb-2 font-medium">Désignation</th>
-              <th className="pb-2 font-medium">Détail</th>
-              <th className="pb-2 text-right font-medium">Montant</th>
-            </tr>
-          </thead>
-          <tbody>
-            {quote.lines.map((line) => (
-              <tr key={line.label} className="border-b border-foreground/10">
-                <td className="py-2 pr-4">{line.label}</td>
-                <td className="py-2 pr-4 text-foreground/70">{line.detail}</td>
-                <td className="py-2 text-right whitespace-nowrap">{formatPrice(line.amountCents)}</td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr className="text-base font-semibold">
-              <td className="pt-4" colSpan={2}>
-                Total TTC
-              </td>
-              <td className="pt-4 text-right whitespace-nowrap">{formatPrice(quote.totalCents)}</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        {includedOptions.length > 0 && (
-          <section className="mt-8 text-sm">
-            <h2 className="font-medium">Accessibilité incluse, sans supplément</h2>
-            <ul className="mt-1 list-inside list-disc text-foreground/80">
-              {includedOptions.map((option) => (
-                <li key={option.id}>{option.label}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <p className="mt-8 border-t border-foreground/15 pt-4 text-xs text-foreground/60">
-          Devis indicatif, sans engagement. Prix en euros, toutes taxes comprises. La
-          réservation se fait auprès de l&apos;agence.
-        </p>
-      </article>
+      <QuoteDocument
+        number={quoteNumber(now, params)}
+        issuedAt={now}
+        tripTitle={trip.title}
+        destination={trip.destination}
+        durationDays={trip.durationDays}
+        departureDate={departure.date}
+        travelers={travelers}
+        lines={quote.lines}
+        totalCents={quote.totalCents}
+        includedAccessibility={trip.options.filter((o) => o.priceCents === 0).map((o) => o.label)}
+      />
     </>
   );
 }
 
-function formatToday(date: Date) {
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "Europe/Paris",
-  }).format(date);
-}
-
-// Le devis n'est pas enregistré : son numéro est dérivé de la date et de la
-// configuration, pour que la même configuration le même jour donne le même numéro.
+// Un devis non enregistré n'a pas d'identifiant : son numéro est dérivé de la date et
+// de la configuration, pour que la même configuration le même jour donne le même numéro.
 function quoteNumber(date: Date, params: Record<string, string | string[] | undefined>) {
   const day = date.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" }).replaceAll("-", "");
   const text = JSON.stringify([params.voyage, params.depart, params.voyageurs, params.options]);

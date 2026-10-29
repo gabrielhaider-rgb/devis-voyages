@@ -58,8 +58,12 @@ Une option d'accessibilité peut avoir un prix de 0 € : elle est alors **inclu
 
 ### V1.1 — après la démo
 
-- **Compte client** avec Supabase Auth (même approche que Job Tracker).
-- **Enregistrement des devis** et page « Mes devis » pour les retrouver et les réimprimer.
+- **Compte client** avec Supabase Auth, par email et mot de passe (même approche que Job Tracker) : inscription, connexion, mot de passe oublié, déconnexion. Un bandeau en haut du site affiche « Se connecter », ou « Mes devis » et « Se déconnecter ».
+- **Le devis reste accessible sans compte.** Le compte ne sert qu'à l'enregistrer : le bouton « Enregistrer ce devis » demande de se connecter si besoin, puis ramène le client sur son devis.
+- **Enregistrement des devis** : le serveur recalcule le devis à partir du catalogue avant de l'enregistrer, et garde une **copie figée** (voyage, date, voyageurs, lignes, total, accessibilité incluse). Si le catalogue change ensuite, le devis enregistré garde son prix d'origine.
+- **Page « Mes devis »** : liste des devis enregistrés, du plus récent au plus ancien ; chaque devis s'ouvre dans la même mise en page imprimable, avec son bouton PDF.
+- **Confirmation de l'email désactivée** dans Supabase pour la démo : le client est connecté dès l'inscription.
+- Hors périmètre de la V1.1 : supprimer ou modifier un devis enregistré, page profil, connexion avec Google, envoi du devis par email.
 
 ### V2
 
@@ -113,12 +117,13 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | `trips` | `id`, `slug`, `title`, `destination`, `duration_days`, `description`, `image_url` | Démo |
 | `departures` | `id`, `trip_id`, `departure_date`, `price_per_person_cents` | Démo |
 | `options` | `id`, `trip_id`, `label`, `price_cents`, `pricing_type` (`fixed` ou `per_person`), `category` (`standard` ou `accessibility`), `exclusive_group` (options non cumulables) | Démo |
-| `quotes` | `id`, `user_id`, `departure_id`, `travelers`, `option_ids`, `total_cents`, `created_at` | V1.1 |
+| `quotes` | `id`, `user_id`, `trip_slug`, `trip_title`, `destination`, `duration_days`, `departure_date`, `travelers`, `lines` (JSON), `included_accessibility` (JSON), `total_cents`, `created_at` — copie figée du devis | V1.1 |
 | `profiles` | `id` (= `auth.users.id`), `role` | V2 |
 
 **RLS** :
 - Démo : lecture publique (`select` pour `anon`) sur `trips`, `departures` et `options`, et aucune écriture.
-- V1.1 : un utilisateur ne lit et ne crée que ses propres `quotes`.
+- V1.1 : un utilisateur ne lit et ne crée que ses propres `quotes` (ni modification ni suppression).
+- Limite connue : un client qui appelle l'API Supabase directement pourrait enregistrer un devis avec un montant inventé, visible par lui seul. Le devis restant indicatif, c'est acceptable pour la V1.1 ; un enregistrement par une fonction côté base corrigerait ce point plus tard.
 - V2 : écriture sur le catalogue réservée aux `profiles.role = 'admin'`.
 
 ## 6. Hors périmètre
@@ -193,3 +198,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | Agent conversationnel (texte ou voix) en V3 | Améliore l'aide au devis, mais dépend d'un parcours et d'un catalogue stables | L'agent s'appuie sur le catalogue en base et sur la fonction de calcul unique |
 | 29/10/2026 | Options à 0 € affichées comme incluses, sans case à cocher | Cocher une prestation gratuite et incluse n'a pas de sens pour le client | Ces options n'apparaissent pas dans le calcul du devis |
 | 29/10/2026 | Transferts non cumulables, via une colonne `exclusive_group` | Un client prend soit le transfert classique, soit le véhicule adapté | Cocher l'un masque l'autre ; la règle est réutilisable pour d'autres options |
+| 29/10/2026 | V1.1 : compte demandé seulement pour enregistrer un devis | Garder le parcours de la démo sans friction | Le devis reste consultable et imprimable sans compte |
+| 29/10/2026 | V1.1 : connexion par email et mot de passe | Approche déjà connue (Job Tracker) | Pages inscription, connexion, mot de passe oublié |
+| 29/10/2026 | V1.1 : devis enregistré en copie figée | Un devis doit garder son prix, comme un devis papier | Les lignes et le total sont stockés tels quels dans `quotes` |
+| 29/10/2026 | V1.1 : confirmation de l'email désactivée pour la démo | Éviter d'ouvrir une boîte mail pendant la démo | Moins sûr : à réactiver avant un usage réel |
