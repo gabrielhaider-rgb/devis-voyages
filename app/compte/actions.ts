@@ -28,12 +28,17 @@ async function siteOrigin() {
 
 export async function signIn(_: FormState, formData: FormData): Promise<FormState> {
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: String(formData.get("email") ?? ""),
     password: String(formData.get("password") ?? ""),
   });
   if (error) return { error: frenchError(error.message) };
-  redirect(safeNext(formData.get("next")));
+
+  // Une page demandée (ex. le devis à enregistrer) passe en premier ; sinon,
+  // l'admin arrive sur l'administration et le client sur ses devis.
+  if (formData.get("next")) redirect(safeNext(formData.get("next")));
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+  redirect(profile?.role === "admin" ? "/admin" : "/mes-devis");
 }
 
 export async function signUp(_: FormState, formData: FormData): Promise<FormState> {

@@ -20,8 +20,9 @@ export default function LoginPage({ searchParams }: PageProps<"/connexion">) {
 
 async function LoginContent({ searchParams }: { searchParams: PageProps<"/connexion">["searchParams"] }) {
   const params = await searchParams;
-  const next = safeNext(params.next);
-  const query = `?next=${encodeURIComponent(next)}`;
+  // Sans page demandée, la destination dépend du rôle (voir signIn).
+  const next = params.next ? safeNext(params.next) : undefined;
+  const query = next ? `?next=${encodeURIComponent(next)}` : "";
 
   return (
     <>

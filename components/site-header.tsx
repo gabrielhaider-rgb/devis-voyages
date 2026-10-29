@@ -30,10 +30,17 @@ async function UserMenu() {
     );
   }
 
+  const admin = await isAdmin(user);
+
   return (
     <nav className="flex items-center gap-4 text-sm">
+      {admin && (
+        <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300">
+          Administrateur
+        </span>
+      )}
       <span className="hidden text-foreground/60 sm:inline">{user.email}</span>
-      {(await isAdmin(user)) && (
+      {admin && (
         <Link href="/admin" className="font-medium hover:underline">
           Admin
         </Link>

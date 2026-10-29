@@ -21,6 +21,13 @@ async function TripList() {
 
   return (
     <>
+      <p
+        role="status"
+        className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200"
+      >
+        Vous êtes connecté en tant qu&apos;<strong>administrateur</strong>. Les modifications faites ici
+        s&apos;appliquent immédiatement au site public.
+      </p>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">Catalogue</h1>
         <div className="flex gap-3 text-sm">
