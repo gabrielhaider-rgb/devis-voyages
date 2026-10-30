@@ -52,7 +52,7 @@ export function AssistantBubble() {
   if (HIDDEN_ON.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return null;
 
   function close() {
-    dictation.stop();
+    dictation.cancel();
     speech.cancel();
     setOpen(false);
   }
