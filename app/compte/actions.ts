@@ -113,5 +113,6 @@ export async function updateProfile(_: FormState, formData: FormData): Promise<F
 
   const { error } = await supabase.from("profiles").update(profile.value).eq("id", data.claims.sub);
   if (error) return { error: "L'enregistrement a échoué. Réessayez." };
-  return { message: "Profil enregistré." };
+  // La redirection recharge la page et le menu avec le nouveau prénom.
+  redirect("/mon-profil?enregistre=1");
 }

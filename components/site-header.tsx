@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { isAdmin } from "@/lib/admin";
 import { getCurrentUser } from "@/lib/auth";
+import { initial } from "@/lib/greeting";
+import { getMyProfile } from "@/lib/profile";
 
 export function SiteHeader() {
   return (
@@ -40,7 +42,8 @@ async function UserMenu() {
     );
   }
 
-  const admin = await isAdmin(user);
+  const [admin, profile] = await Promise.all([isAdmin(user), getMyProfile(user.id)]);
+  const firstName = profile?.firstName?.trim();
 
   return (
     <>
@@ -58,8 +61,28 @@ async function UserMenu() {
           Mes devis
         </Link>
       )}
-      <Link href="/mon-profil" className="hover:text-clay" title={user.email ?? undefined}>
-        Mon profil
+      {/* Le prénom montre, sur toutes les pages, qu'on est reconnu. */}
+      <Link
+        href="/mon-profil"
+        className="inline-flex items-center gap-2 hover:text-clay"
+        title={`Mon profil${user.email ? ` (${user.email})` : ""}`}
+      >
+        {firstName ? (
+          <>
+            <span
+              aria-hidden="true"
+              className="inline-flex size-8 items-center justify-center rounded-full bg-clay font-semibold text-cream"
+            >
+              {initial(firstName)}
+            </span>
+            <span>
+              {firstName}
+              <span className="sr-only"> : mon profil</span>
+            </span>
+          </>
+        ) : (
+          "Mon profil"
+        )}
       </Link>
       <form action="/auth/deconnexion" method="post">
         <button type="submit" className={pill}>
