@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Devis voyages
 
-## Getting Started
+**Le site d'un tour-opérateur (fictif) où le client choisit un voyage, le configure et obtient seul son devis en PDF, en moins de 2 minutes, avec un assistant IA qui l'aide à l'écrit comme à la voix.**
 
-First, run the development server:
+| | |
+|---|---|
+| 🌍 **Site en ligne** | **https://devis-voyages.vercel.app** |
+| 📄 **PRD (cahier des charges)** | [PRD.md](PRD.md) (lisible sur GitHub) · [version PDF](docs/PRD-devis-voyages.pdf) |
+| 🎓 **Nature** | Projet d'apprentissage / portfolio |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Le problème
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Aujourd'hui, le client d'une agence de voyages obtient son devis par email ou par téléphone : un conseiller le prépare à la main. C'est lent pour le client, qui risque d'abandonner, et coûteux pour l'agence.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## La solution
 
-## Learn More
+Une page web qui affiche le catalogue, calcule le prix en direct et produit un devis imprimable en PDF, sans passer par un conseiller.
 
-To learn more about Next.js, take a look at the following resources:
+## Fonctionnalités livrées
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Version | Contenu |
+|---|---|
+| **V1 — Démo** | Catalogue de 5 voyages à départs fixes ; configurateur (date, voyageurs, options, dont des options non cumulables) ; prix calculé en direct ; devis imprimable en PDF ; options d'accessibilité (chambre adaptée et assistance incluses, transfert en véhicule adapté en option) |
+| **V1.1 — Comptes** | Inscription et connexion ; enregistrement des devis ; « Mes devis » ; mot de passe oublié |
+| **V2 — Administration** | Rôle admin ; gestion du catalogue (voyages, départs, options, photos) ; archivage ; gestion des admins |
+| **V3 — Assistant** | Bulle d'aide sur tout le site (Claude Haiku 5.5) qui propose une configuration chiffrée ; en texte et à la voix (dictée et lecture à voix haute) ; protections contre les abus (limites par IP et globales, pare-feu Vercel) |
+| **V4 — Suivi** | Profil (prénom, nom, téléphone) ; dashboard des devis ; listes des devis, des clients et des admins ; espace client personnalisé |
+| **Design** | Identité « Carnet de voyage » : tons sable et terre cuite, titres Fraunces, photos des destinations ; contrastes vérifiés |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Prochaines étapes (V5, à cadrer)
 
-## Deploy on Vercel
+1. Paiement en ligne (Stripe, en mode test).
+2. Détails du paiement dans l'espace client.
+3. Devis payés dans l'administration et dashboard « prévisionnel / réel ».
+4. Partage du devis par lien.
+5. Carte des étapes et hôtels du voyage.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Le détail, les règles de calcul, les cas de test et le journal des décisions sont dans le [PRD](PRD.md).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack technique
+
+- **Next.js 16** (App Router, Server Components, Server Actions) et **Tailwind CSS**
+- **Supabase** : Postgres avec RLS sur toutes les tables, authentification, fonctions SQL sécurisées
+- **Vercel** : déploiement continu depuis GitHub, pare-feu (limitation de débit sur l'assistant)
+- **API Anthropic** (Claude Haiku 5.5) avec outils pour l'assistant ; **Web Speech API** du navigateur pour la voix
+- **Vitest** : 76 tests (calcul des prix, validations, assistant, textes)
+
+Les prix sont calculés en centimes par une fonction unique, utilisée à la fois par le configurateur, le devis enregistré et l'assistant.
+
+## Lancer le projet en local
+
+1. Installer les dépendances :
+   ```bash
+   npm install
+   ```
+2. Copier `.env.example` en `.env.local` et renseigner l'URL et la clé publique Supabase, ainsi que la clé d'API Anthropic (pour l'assistant).
+3. Dans Supabase, exécuter dans l'ordre les migrations de [`supabase/migrations`](supabase/migrations), puis [`supabase/seed.sql`](supabase/seed.sql).
+4. Démarrer :
+   ```bash
+   npm run dev
+   ```
+   Le site est sur http://localhost:3000.
+5. Lancer les tests :
+   ```bash
+   npm test
+   ```
