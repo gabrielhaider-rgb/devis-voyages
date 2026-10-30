@@ -6,6 +6,7 @@
 | **Nature** | Projet d'apprentissage / portfolio |
 | **Stack** | Next.js 16 (App Router), Supabase (Postgres + RLS), Vercel, GitHub |
 | **Rédigé le** | 29/10/2026 |
+| **Mis à jour le** | 30/10/2026 (prochaines étapes V5) |
 | **Échéance démo** | 30/10/2026 (J+1) |
 
 ---
@@ -27,6 +28,9 @@
 | **Client (visiteur)** | Trouver un voyage, le configurer, connaître le prix total et garder un devis | Démo, V1.1 |
 | **Administrateur de l'agence** | Ajouter et modifier les voyages, départs et options sans toucher au code | V2 |
 | **Administrateur de l'agence** | Suivre les devis enregistrés et retrouver les clients pour les recontacter | V4 |
+| **Client connecté** | Payer son voyage en ligne, suivre son paiement, partager son devis | V5 (à cadrer) |
+| **Administrateur de l'agence** | Voir les devis payés et comparer le prévisionnel au réel | V5 (à cadrer) |
+| **Tout visiteur** | Visualiser sur une carte les étapes et hôtels de son voyage | V5 (à cadrer) |
 
 ## 3. Fonctionnalités et priorités
 
@@ -124,8 +128,38 @@ Objectif : donner à l'agence une vue d'ensemble des devis enregistrés et de se
 - **Liste des clients** : nom, email, téléphone, date d'inscription, nombre de devis et montant total ; **recherche** par nom ou email. Un clic ouvre la **fiche client** avec la liste de ses devis.
 - **Liste des admins** : séparée de celle des clients (nom, email, admin depuis), avec « Retirer le rôle admin » ; on nomme un admin depuis la fiche d'un client.
 - **Changement de rôle** par une fonction en base (`set_user_role`) qui vérifie que l'appelant est admin et refuse son propre compte : chacun peut modifier son prénom, son nom et son téléphone, jamais son rôle.
+- **Espace client personnalisé** : « Mes devis » s'ouvre sur « Mon espace · Bonjour [prénom], » et le nombre de devis enregistrés ; le menu affiche le prénom (avec son initiale) à la place de « Mon profil ». Après l'enregistrement du profil, une confirmation mène à « Mes devis ».
 - « Mes devis » reste limité aux devis du compte connecté. Un admin n'a pas de lien « Mes devis » dans le bandeau : il suit les devis dans l'administration (onglet Devis), vers laquelle `/mes-devis` le renvoie.
 - Hors périmètre de la V4 : modifier ou supprimer un devis, statut de suivi commercial (« à rappeler », « réservé »…), export CSV, envoi d'emails, filtres de dates avancés.
+
+### Prochaines étapes (V5) — à cadrer
+
+Objectif : passer du devis à la vente (paiement en ligne et suivi), et donner davantage envie de partir (partage, carte du voyage). Chaque étape fera l'objet d'un plan court validé avant construction. Ordre de réalisation souhaité :
+
+1. **Paiement en ligne** (client connecté)
+   - Payer un devis enregistré depuis « Mes devis », par carte, via un prestataire de paiement (Stripe Checkout pressenti, en **mode test** : aucun vrai débit, projet d'apprentissage).
+   - Le statut du devis passe à « payé » uniquement sur confirmation du prestataire (webhook), jamais sur la seule redirection du navigateur.
+   - Le montant payé est recalculé côté serveur à partir du devis enregistré.
+   - À trancher : paiement total ou acompte ; délai de validité d'un devis avant paiement ; que faire si le prix ou le départ a changé depuis l'enregistrement ; remboursement et annulation (hors périmètre a priori).
+2. **Détails du paiement dans l'espace client**
+   - Dans « Mes devis » et le détail d'un devis : statut (à payer, payé), date et montant payés, moyen de paiement (4 derniers chiffres de la carte), référence de transaction.
+   - Un justificatif imprimable, sur le modèle du devis PDF.
+   - Dépend de l'étape 1.
+3. **Devis payés dans l'administration et dashboard « prévisionnel / réel »**
+   - Liste et détail des devis : colonne et filtre « payé », date et montant du paiement.
+   - Dashboard : le **prévisionnel** (montant des devis enregistrés non payés) et le **réel** (montant encaissé), par mois et par voyage, avec le taux de transformation devis → paiement.
+   - À trancher : un devis ancien non payé compte-t-il encore dans le prévisionnel (durée de validité) ?
+   - Dépend de l'étape 1.
+4. **Partage du devis** (client connecté)
+   - Depuis le détail d'un devis, créer un **lien de partage** à envoyer à ses proches (copier le lien, ou partage natif du téléphone).
+   - La personne qui reçoit le lien voit le devis en lecture seule, sans se connecter, sans les coordonnées du client (téléphone, email) ni bouton de paiement.
+   - Lien non devinable, que le client peut désactiver.
+   - Hors périmètre : envoi d'emails par le site, commentaires ou co-édition du devis.
+5. **Carte du voyage** (tout visiteur, connecté ou non)
+   - Sur la page d'un voyage (et sur le devis), une **carte** des principaux jalons : étapes, hôtels, activités, avec le jour du séjour.
+   - Les jalons sont saisis par l'admin (nom, type, jour, position) dans la fiche du voyage.
+   - Solution légère pressentie : carte OpenStreetMap (gratuite, sans clé), une liste des jalons sous la carte pour l'accessibilité et le mobile.
+   - À trancher : saisie de la position (adresse convertie ou clic sur la carte) ; carte imprimée ou non sur le PDF.
 
 ## 4. Règles de calcul du prix
 
@@ -176,7 +210,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 
 ## 6. Hors périmètre
 
-- Réservation et paiement en ligne.
+- Réservation et paiement en ligne jusqu'à la V4 (le paiement est prévu en V5, en mode test).
 - Filtres, recherche et tri des voyages.
 - Prix par saison et dates de départ libres (seulement des départs fixes).
 - Gestion des places disponibles ou des stocks.
@@ -223,6 +257,7 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 - **V2** : rôles, interface admin du catalogue, archivage des voyages, gestion des admins.
 - **V3** : assistant conversationnel (bulle, Claude Haiku 5.5, protections anti-abus), en texte et à la voix (dictée et lecture par le navigateur).
 - **V4** : profil enrichi (nom, prénom, téléphone), dashboard et liste des devis, liste des clients et des admins. Elle ne dépend pas de la V3 et peut être construite avant.
+- **V5 (à cadrer)**, dans cet ordre : 1. paiement en ligne ; 2. détails du paiement dans l'espace client ; 3. devis payés dans l'admin et dashboard prévisionnel / réel ; 4. partage du devis ; 5. carte géolocalisée des jalons du voyage. Les étapes 2 et 3 dépendent de la 1 ; les étapes 4 et 5 sont indépendantes.
 
 ## 10. Risques et décisions
 
@@ -263,6 +298,8 @@ Options d'accessibilité : transfert en véhicule adapté (80 €, fixe), assist
 | 29/10/2026 | V3 : texte d'abord, la voix ensuite | Livrer un assistant fiable avant d'ajouter la voix | La voix fera l'objet d'une étape suivante |
 | 29/10/2026 | Voix par la Web Speech API du navigateur | Gratuit, sans service ni clé supplémentaires ; l'agent reste en texte | Dictée absente sur Firefox ; qualité de voix variable selon le système ; réponse lue seulement après une dictée |
 | 30/10/2026 | Dictée continue et voix installées sur l'appareil uniquement | Les phrases étaient coupées à la première pause ; la voix en ligne « Google français » de Chrome restait muette | La qualité de la voix dépend de l'appareil du visiteur ; écoute continue à vérifier sur Android |
+| 30/10/2026 | Espace client personnalisé (accueil par le prénom) | Le client connecté ne voyait rien qui montre qu'il était reconnu | Prénom dans le menu et sur « Mes devis » ; confirmation après l'enregistrement du profil |
+| 30/10/2026 | Prochaines étapes V5 : paiement, suivi du paiement, prévisionnel / réel, partage, carte du voyage | Passer du devis à la vente et donner envie de partir | Lève la décision « pas de paiement » du 29/10 ; paiement en mode test uniquement ; chaque étape cadrée avant construction |
 | 29/10/2026 | V3 : bulle de discussion sur toutes les pages | Aide visible partout dans le parcours | Masquée dans l'administration et à l'impression |
 | 29/10/2026 | Design « Carnet de voyage » (piste A) sur tout le site | Donner envie de voyager : tons sable et terre cuite, titres Fraunces, photos | Site toujours clair (pas de mode sombre) ; contrastes vérifiés (texte ≥ 4,5:1) ; PDF sur fond blanc |
 | 29/10/2026 | Photos des voyages par adresse saisie dans l'admin | Simple, sans stockage de fichiers | Une page Unsplash est convertie en adresse d'image à l'enregistrement ; une adresse qui n'affiche pas d'image est refusée ; un aplat de couleur s'affiche sans photo |
