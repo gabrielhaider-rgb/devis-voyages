@@ -29,13 +29,20 @@ Une page web qui affiche le catalogue, calcule le prix en direct et produit un d
 | **V4 — Suivi** | Profil (prénom, nom, téléphone) ; dashboard des devis ; listes des devis, des clients et des admins ; espace client personnalisé |
 | **Design** | Identité « Carnet de voyage » : tons sable et terre cuite, titres Fraunces, photos des destinations ; contrastes vérifiés |
 
-## Prochaines étapes (V5, à cadrer)
+## Évolutions prioritaires après la formation
 
-1. Paiement en ligne (Stripe, en mode test).
-2. Détails du paiement dans l'espace client.
-3. Devis payés dans l'administration et dashboard « prévisionnel / réel ».
-4. Partage du devis par lien.
-5. Carte des étapes et hôtels du voyage.
+| # | Évolution | Effort |
+|---|---|---|
+| 1 | **Paiement en ligne** : le client paie son devis par Stripe (en mode test), avec un prix recalculé côté serveur, puis retrouve le détail de son paiement dans son espace. | **L** |
+| 2 | **Suivi des ventes dans l'admin** : les devis payés sont signalés et le dashboard compare le chiffre d'affaires prévu (devis) et réel (paiements). | **M** |
+| 3 | **Partage du devis** : le client connecté envoie à ses co-voyageurs un lien en lecture seule, qu'il peut révoquer. | **S** |
+
+**Pourquoi ces priorités ?**
+
+- **Paiement (valeur la plus forte)** : le parcours s'arrête aujourd'hui au devis. Le paiement transforme un outil de simulation en outil de vente : le client va jusqu'à l'achat sans conseiller. C'est l'évolution la plus lourde (paiement, webhook, sécurité du montant), d'où un démarrage en mode test.
+- **Suivi des ventes (découle du paiement)** : une fois les paiements en place, l'agence doit voir ce qui est vendu, pas seulement simulé. Coût modéré, car le dashboard existe déjà.
+- **Partage (gain rapide)** : un voyage se décide rarement seul ; partager le devis facilite la décision de groupe, donc la conversion. Petite évolution : un lien unique et une page en lecture seule.
+- **Écartée pour l'instant** : la carte des étapes et hôtels du voyage. Appréciée, mais elle n'aide pas directement à vendre et demande de saisir les étapes de chaque voyage.
 
 Le détail, les règles de calcul, les cas de test et le journal des décisions sont dans le [PRD](PRD.md).
 
